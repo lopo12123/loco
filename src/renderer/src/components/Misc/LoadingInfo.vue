@@ -37,6 +37,7 @@ const props = withDefaults(defineProps<{
     i {
         margin-right: 5px;
         font-size: 12px;
+        opacity: 0.8;
     }
 
     .blink {

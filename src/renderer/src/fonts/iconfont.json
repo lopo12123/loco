@@ -1,0 +1,51 @@
+{
+  "id": "3322404",
+  "name": "git-loco",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1350461",
+      "name": "sq-home",
+      "font_class": "home",
+      "unicode": "e666",
+      "unicode_decimal": 58982
+    },
+    {
+      "icon_id": "249352",
+      "name": "工作流程图",
+      "font_class": "gongzuoliuchengtu",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "6150937",
+      "name": "最大化",
+      "font_class": "zuidahua",
+      "unicode": "e746",
+      "unicode_decimal": 59206
+    },
+    {
+      "icon_id": "8643140",
+      "name": "刷新",
+      "font_class": "shuaxin",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "12022358",
+      "name": "最小化",
+      "font_class": "zuixiaohua",
+      "unicode": "e6b9",
+      "unicode_decimal": 59065
+    },
+    {
+      "icon_id": "17830629",
+      "name": "关闭",
+      "font_class": "guanbi",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    }
+  ]
+}

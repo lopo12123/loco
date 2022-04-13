@@ -23,12 +23,40 @@ img {
     -webkit-user-drag: none;
 }
 
+// endregion
+
+// region PrimeVue style
 .pi {
     width: 20px;
     height: 20px;
     color: $font-color-default;
     line-height: 20px;
     text-align: center;
+}
+
+.p-toast {
+    width: 200px !important;
+    font-size: 12px !important;
+
+    .p-toast-message-icon {
+        font-size: 24px !important;
+    }
+
+    .p-toast-message-content {
+        padding: 5px !important;
+        display: flex;
+        align-items: center;
+
+        .p-toast-message-text {
+            .p-toast-summary, .p-toast-detail {
+                word-break: break-all;
+            }
+        }
+    }
+
+    .p-toast-detail {
+        margin: 0 !important;
+    }
 }
 
 // endregion
@@ -41,4 +69,5 @@ img {
         transform: rotate(360deg);
     }
 }
+
 // endregion

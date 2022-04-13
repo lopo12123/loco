@@ -1,23 +1,26 @@
 import { app, shell, BrowserWindow } from "electron";
-import * as path from "path";
+import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
+import { setIpc } from "./IpcSolve";
 
-function createWindow(): void {
+let mainWindow: BrowserWindow | null = null
+
+const createWindow = () => {
     // Create the browser window.
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
         show: false,
         frame: false,
         autoHideMenuBar: true,
-        // icon: path.join(__dirname, '../../build/icon.png')
+        // icon: join(__dirname, '../../build/icon.png')
         webPreferences: {
-            preload: path.join(__dirname, '../preload/index.js')
+            preload: join(__dirname, '../preload/index.js')
         }
     })
 
     mainWindow.on('ready-to-show', () => {
-        mainWindow.show()
+        mainWindow?.show()
     })
 
     mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -31,7 +34,7 @@ function createWindow(): void {
         mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
     }
     else {
-        mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
+        mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
     }
 }
 
@@ -69,3 +72,5 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+
+setIpc(mainWindow)

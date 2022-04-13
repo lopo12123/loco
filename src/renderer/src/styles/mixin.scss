@@ -31,12 +31,12 @@
 @mixin doBlink($time: 1s) {
     animation: _blink $time infinite linear;
 }
-// ednregion
+// endregion
 
 // region 流水
 @keyframes _rgb {
     0% {
-        color: #777777;
+        color: #86a5b1;
     }
     25% {
         color: #0cd553;
@@ -48,7 +48,7 @@
         color: #ec4117;
     }
     100% {
-        color: #777777;
+        color: #86a5b1;
     }
 }
 

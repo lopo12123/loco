@@ -10,14 +10,15 @@ useToastStore().bind(toast)
 
 <template>
     <div class="app">
+
+        <Toast/>
+
         <div class="banner-container">
             <AppBanner/>
         </div>
         <div class="view-container">
             <router-view/>
         </div>
-
-        <Toast/>
     </div>
 </template>
 

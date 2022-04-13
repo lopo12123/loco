@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { version } from "../../public/manifest.json";
+
 type BannerOperates = 'min' | 'refresh' | 'max' | 'close'
 const doBannerOperate = (op: BannerOperates) => {
     switch(op) {
@@ -20,8 +22,9 @@ const doBannerOperate = (op: BannerOperates) => {
 
 <template>
     <div class="app-banner">
-        <div class="logo">
-            logo
+        <div class="tag">
+            <img class="logo" src="" alt="logo">
+            <span class="version">v{{ version }}</span>
         </div>
 
         <div class="btn-group">
@@ -55,12 +58,23 @@ const doBannerOperate = (op: BannerOperates) => {
     justify-content: space-between;
     -webkit-app-region: drag;
 
-    .logo {
+    .tag {
         position: relative;
-        width: 100px;
+        width: fit-content;
         height: 20px;
         margin: 10px;
+        font-size: 12px;
         line-height: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-start;
+
+        .logo {
+            margin-right: 5px;
+        }
+        .version {
+            font-size: 10px;
+        }
     }
 
     .btn-group {

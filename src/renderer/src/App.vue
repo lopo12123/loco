@@ -1,5 +1,11 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import AppBanner from "./layouts/AppBanner.vue";
+import Toast from "primevue/toast";
+import { useToast } from "primevue/usetoast";
+import { useToastStore } from "./stores/store_toast";
+
+const toast = useToast()
+useToastStore().bind(toast)
 </script>
 
 <template>
@@ -10,6 +16,8 @@ import AppBanner from "./layouts/AppBanner.vue";
         <div class="view-container">
             <router-view/>
         </div>
+
+        <Toast/>
     </div>
 </template>
 

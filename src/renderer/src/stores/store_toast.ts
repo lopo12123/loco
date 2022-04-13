@@ -8,7 +8,7 @@ class StoreToast {
         this.#toast = ins
     }
 
-    info(msg: string, title: string, till: number = 3000) {
+    info(msg: string, title?: string, till: number = 3000) {
         this.#toast?.removeAllGroups()
         this.#toast?.add({
             severity: ToastSeverity.INFO,
@@ -18,7 +18,7 @@ class StoreToast {
         })
     }
 
-    warn(msg: string, title: string, till: number = 3000) {
+    warn(msg: string, title?: string, till: number = 3000) {
         this.#toast?.removeAllGroups()
         this.#toast?.add({
             severity: ToastSeverity.WARN,
@@ -28,7 +28,7 @@ class StoreToast {
         })
     }
 
-    error(msg: string, title: string, till: number = 3000) {
+    error(msg: string, title?: string, till: number = 3000) {
         this.#toast?.removeAllGroups()
         this.#toast?.add({
             severity: ToastSeverity.ERROR,
@@ -38,7 +38,7 @@ class StoreToast {
         })
     }
 
-    success(msg: string, title: string, till: number = 3000) {
+    success(msg: string, title?: string, till: number = 3000) {
         this.#toast?.removeAllGroups()
         this.#toast?.add({
             severity: ToastSeverity.SUCCESS,

@@ -10,6 +10,8 @@
         "src/preload/*.d.ts"
     ],
     "compilerOptions": {
-        "composite": true
+        "composite": true,
+        "noUnusedParameters": false,
+        "noUnusedLocals": false
     }
 }

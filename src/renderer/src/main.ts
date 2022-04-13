@@ -1,4 +1,17 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+// style
+import "primevue/resources/themes/saga-blue/theme.css";
+import "primevue/resources/primevue.min.css";
+import "primeicons/primeicons.css";
+import "@renderer/styles/index.scss";
 
-createApp(App).mount('#app')
+// core
+import { createApp } from "vue";
+
+// plugin
+import { router } from "./routers";
+
+import App from "./App.vue";
+
+createApp(App)
+    .use(router)
+    .mount('#app')

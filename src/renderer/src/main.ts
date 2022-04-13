@@ -10,11 +10,13 @@ import { createApp } from "vue";
 
 // plugin
 import { router } from "./routers";
+import PrimeVue from "primevue/config";
 import ToastService from "primevue/toastservice";
 
 import App from "./App.vue";
 
 createApp(App)
     .use(router)
+    .use(PrimeVue)
     .use(ToastService)
     .mount('#app')

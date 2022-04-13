@@ -29,7 +29,6 @@ const dragOverListener = (e: DragEvent) => {
 }
 
 onMounted(() => {
-    console.log(containerRef.value)
     containerRef.value?.addEventListener('drop', dropListener)
     containerRef.value?.addEventListener('dragover', dragOverListener)
 })

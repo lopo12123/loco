@@ -1,9 +1,11 @@
 {
     "name": "loco",
-    "version": "0.0.0",
+    "private": true,
+    "version": "0.0.1-dev",
     "description": "An Electron application with Vue and TypeScript",
     "main": "./out/main/index.js",
     "author": "lopo",
+    "license": "MIT",
     "scripts": {
         "start": "electron-vite preview",
         "dev:loco": "electron-vite dev",
@@ -14,7 +16,10 @@
     },
     "dependencies": {
         "@electron-toolkit/preload": "^1.0.1",
-        "@electron-toolkit/utils": "^1.0.2"
+        "@electron-toolkit/utils": "^1.0.2",
+        "primeicons": "^5.0.0",
+        "primevue": "^3.12.4",
+        "vue-router": "^4.0.14"
     },
     "devDependencies": {
         "@electron-toolkit/tsconfig": "^1.0.1",

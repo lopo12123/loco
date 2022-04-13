@@ -19,6 +19,7 @@ const dropListener = (e: DragEvent) => {
             useToastStore().warn('Electron only')
         }
         else {
+            // useToastStore().info(path, 'Path')
             emits('file-drop', path)
         }
     }

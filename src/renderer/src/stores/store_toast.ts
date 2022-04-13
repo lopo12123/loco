@@ -55,4 +55,4 @@ class StoreToast {
 
 const _ = new StoreToast()
 
-export const useToastStore = () => _
+export const useToastStore = (): StoreToast => _

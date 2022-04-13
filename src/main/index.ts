@@ -2,20 +2,15 @@ import { app, shell, BrowserWindow } from "electron";
 import * as path from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 
-console.log(process.version)
-
 function createWindow(): void {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-        width: 960,
-        height: 720,
+        width: 800,
+        height: 600,
         show: false,
+        frame: false,
         autoHideMenuBar: true,
-        ...(process.platform === 'linux'
-            ? {
-                icon: path.join(__dirname, '../../build/icon.png')
-            }
-            : {}),
+        // icon: path.join(__dirname, '../../build/icon.png')
         webPreferences: {
             preload: path.join(__dirname, '../preload/index.js')
         }

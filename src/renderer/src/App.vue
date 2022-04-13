@@ -1,11 +1,36 @@
 <script setup lang="ts">
-import Versions from './components/Versions.vue'
+import AppBanner from "./layouts/AppBanner.vue";
 </script>
 
 <template>
-    <Versions></Versions>
+    <div class="app">
+        <div class="banner-container">
+            <AppBanner/>
+        </div>
+        <div class="view-container">
+            <router-view/>
+        </div>
+    </div>
 </template>
 
 <style lang="scss">
-@import 'assets/css/styles.scss';
+.app {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    .banner-container {
+        position: relative;
+        width: 100%;
+        height: 40px;
+        border-bottom: solid 1px #86a5b1;
+    }
+
+    .view-container {
+        position: relative;
+        width: calc(100% - 20px);
+        height: calc(100% - 61px);
+        padding: 10px;
+    }
+}
 </style>

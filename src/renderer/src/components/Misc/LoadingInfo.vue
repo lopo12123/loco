@@ -2,15 +2,19 @@
 import { withDefaults } from "vue";
 
 const props = withDefaults(defineProps<{
+    icon?: string
+    spin?: boolean
     text?: string
 }>(), {
+    icon: 'pi pi-sync',
+    spin: true,
     text: 'loading'
 })
 </script>
 
 <template>
     <div class="loading-info">
-        <i class="pi pi-sync pi-spin"/>
+        <i :class="[props.icon, props.spin ? 'pi-spin' : '']"/>
         <span class="blink">
             {{ props.text }}
         </span>

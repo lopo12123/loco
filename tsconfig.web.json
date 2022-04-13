@@ -2,6 +2,7 @@
     "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
     "include": [
         "src/renderer/src/env.d.ts",
+        "src/renderer/src/global.d.ts",
         "src/renderer/src/**/*.ts",
         "src/renderer/src/**/*.d.ts",
         "src/renderer/src/**/*.tsx",

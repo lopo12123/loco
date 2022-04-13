@@ -1,0 +1,72 @@
+// 滚动条样式
+@mixin doScrollbar($color: #aaaaaa) {
+    &::-webkit-scrollbar {
+        width: 8px !important;
+        height: 8px !important;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: $color !important;
+        border-radius: 10px !important;
+    }
+    &::-webkit-scrollbar-track {
+        background-color: #00000000 !important;
+        border-radius: 10px !important;
+        opacity: 0 !important;
+    }
+}
+
+// region 呼吸
+@keyframes _blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1
+    }
+}
+
+@mixin doBlink($time: 1s) {
+    animation: _blink $time infinite linear;
+}
+// ednregion
+
+// region 流水
+@keyframes _rgb {
+    0% {
+        color: #777777;
+    }
+    25% {
+        color: #0cd553;
+    }
+    50% {
+        color: #f8ba3f;
+    }
+    75% {
+        color: #ec4117;
+    }
+    100% {
+        color: #777777;
+    }
+}
+
+@mixin doRGB($time: 1s) {
+    animation: _rgb $time infinite linear;
+}
+// endregion
+
+// region 旋转
+@keyframes _spin {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@mixin doSpin($time: 1s) {
+    animation: _spin $time infinite linear;
+}
+// endregion

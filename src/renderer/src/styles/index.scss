@@ -1,0 +1,26 @@
+$blue-soft: #9feaf9;
+$blue-dark: #86a5b1;
+
+// region global style
+* {
+    margin: 0;
+    padding: 0;
+}
+html, body {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #2f3241;
+    color: #86a5b1;
+    font-family: 'Menlo', 'Lucida Console', monospace;
+    overflow: hidden;
+    box-sizing: content-box;
+}
+img {
+    -webkit-user-drag: none;
+}
+// endregion
+
+// region custom
+
+// endregion

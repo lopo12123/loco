@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import LoadingInfo from "../components/Misc/LoadingInfo.vue";
 import FileReceiver from "../components/Misc/FileReceiver.vue";
-import { useToastStore } from "../stores/store_toast";
 import { ref } from "vue";
+import { useIpcRenderer } from "../stores/store_ipc";
 
 const InfoPair = {
     free: {
@@ -19,13 +19,15 @@ const InfoPair = {
 const infoConfig = ref(InfoPair.free)
 
 const solveGitPath = (path: string) => {
-    if(!path.endsWith('.git')) {
-        useToastStore().warn('Invalid path, only .git files are accepted.')
-    }
-    else {
-        // TODO ipc发送路径信息 - 后台调用git - 回调跳转到详情页面
-        infoConfig.value = InfoPair.block
-    }
+    infoConfig.value = InfoPair.block
+    console.log(path.toString(), path)
+    useIpcRenderer().send('banner', { path: path })
+    // useIpcRenderer()
+    //     .send('git:base', { filePath: path })
+    // useIpcRenderer().once('git:base-reply', (e, args) => {
+    //     infoConfig.value = InfoPair.free
+    //     console.log(e, args)
+    // })
 }
 </script>
 

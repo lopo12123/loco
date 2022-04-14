@@ -19,6 +19,7 @@
         "@electron-toolkit/utils": "^1.0.2",
         "primeicons": "^5.0.0",
         "primevue": "^3.12.4",
+        "simple-git": "^3.6.0",
         "vue-router": "^4.0.14"
     },
     "devDependencies": {

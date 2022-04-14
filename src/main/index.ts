@@ -8,8 +8,8 @@ let mainWindow: BrowserWindow | null = null
 const createWindow = () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 400, // 800,
+        height: 300,  // 600,
         show: false,
         frame: false,
         // icon: join(__dirname, '../../build/icon.png')

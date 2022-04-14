@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import { Channel, CB_Main } from "./declare";
 
 /**
@@ -6,9 +6,26 @@ import { Channel, CB_Main } from "./declare";
  * @param winRef
  */
 const setIpc = (winRef: BrowserWindow | null) => {
-    ipcMain.on(Channel.banner, ((e, args) => {
+    if(!winRef) return;
 
-    }) as (CB_Main[Channel.banner]))
+    /**
+     * @description AppBanner上的按钮事件
+     */
+    ipcMain.on(Channel.banner, ((e, args) => {
+        switch(args.type) {
+            case 'min':
+                winRef?.minimize()
+                break
+            case 'max':
+                winRef?.isMaximized() ? winRef?.unmaximize() : winRef?.maximize()
+                break
+            case 'close':
+                // `win.close()` is disabled while `frame=false`
+                winRef = null
+                app.exit()
+                break
+        }
+    }) as CB_Main[Channel.banner])
 }
 
 export {

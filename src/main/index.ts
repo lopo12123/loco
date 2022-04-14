@@ -12,7 +12,6 @@ const createWindow = () => {
         height: 600,
         show: false,
         frame: false,
-        autoHideMenuBar: true,
         // icon: join(__dirname, '../../build/icon.png')
         webPreferences: {
             preload: join(__dirname, '../preload/index.js')

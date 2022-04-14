@@ -1,9 +1,7 @@
-import { CB_Renderer, Channel } from "../../../common/declare";
+import { IpcRenderer } from "@electron-toolkit/preload";
 
-const bannerIpc = window.ipc[Channel.banner] as CB_Renderer[Channel.banner]
-
-
+const useIpcRenderer = (): IpcRenderer => window.electron.ipcRenderer
 
 export {
-    bannerIpc
+    useIpcRenderer,
 }

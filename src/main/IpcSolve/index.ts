@@ -7,7 +7,7 @@ import { app, BrowserWindow, ipcMain } from "electron";
 const setIpc = (winRef: BrowserWindow | null) => {
     if(!winRef) return;
 
-    // region [channel]: banner
+    // region [channel: banner]
     /**
      * @description AppBanner上的按钮事件
      */
@@ -25,6 +25,12 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 app.exit()
                 break
         }
+    })
+    // endregion
+
+    // region [channel: git]
+    ipcMain.on('git', (e, args) => {
+
     })
     // endregion
 }

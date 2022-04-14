@@ -23,7 +23,7 @@ interface CB_Main {
 
 // region ipcRenderer
 interface CB_Renderer {
-
+    [Channel.banner]: (type: Exclude<BannerEvType, 'refresh'>) => void
 }
 
 // endregion

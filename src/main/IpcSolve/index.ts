@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain } from "electron";
-import { Channel, CB_Main } from "./declare";
+import { Channel, CB_Main } from "../../common/declare";
 
 /**
  * @description set all event of ipcMain

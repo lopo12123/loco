@@ -11,8 +11,8 @@ const setIpc = (winRef: BrowserWindow | null) => {
     /**
      * @description AppBanner上的按钮事件
      */
-    ipcMain.on(Channel.banner, ((e, args) => {
-        switch(args.type) {
+    ipcMain.on(Channel.banner, ((e, { type }) => {
+        switch(type) {
             case 'min':
                 winRef?.minimize()
                 break

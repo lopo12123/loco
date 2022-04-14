@@ -16,7 +16,7 @@ type BannerEvType = 'min' | 'refresh' | 'max' | 'close'
 
 // region ipcMain
 interface CB_Main {
-    [Channel.banner]: (e: IpcMainEvent, args: { type: BannerEvType }) => void
+    [Channel.banner]: (e: IpcMainEvent, args: { type: Exclude<BannerEvType, 'refresh'> }) => void
 }
 
 // endregion

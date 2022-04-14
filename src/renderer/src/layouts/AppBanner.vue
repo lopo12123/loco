@@ -1,20 +1,17 @@
 <script lang="ts" setup>
 import { version } from "../../public/manifest.json";
+import { bannerIpc } from "../stores/store_ipc";
 
 type BannerOperates = 'min' | 'refresh' | 'max' | 'close'
 const doBannerOperate = (op: BannerOperates) => {
     switch(op) {
-        case 'min':
-            console.log('min')
-            break
         case 'refresh':
             window.location.reload()
             break
+        case 'min':
         case 'max':
-            console.log('max')
-            break
         case 'close':
-            console.log('close')
+            bannerIpc(op)
             break
     }
 }
@@ -72,6 +69,7 @@ const doBannerOperate = (op: BannerOperates) => {
         .logo {
             margin-right: 5px;
         }
+
         .version {
             font-size: 10px;
         }

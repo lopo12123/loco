@@ -1,5 +1,4 @@
 import { app, BrowserWindow, ipcMain } from "electron";
-import { Channel, CB_Main } from "../../common/declare";
 
 /**
  * @description set all event of ipcMain
@@ -8,10 +7,11 @@ import { Channel, CB_Main } from "../../common/declare";
 const setIpc = (winRef: BrowserWindow | null) => {
     if(!winRef) return;
 
+    // region [channel]: banner
     /**
      * @description AppBanner上的按钮事件
      */
-    ipcMain.on(Channel.banner, ((e, { type }) => {
+    ipcMain.on('banner', (e, { type }) => {
         switch(type) {
             case 'min':
                 winRef?.minimize()
@@ -25,7 +25,8 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 app.exit()
                 break
         }
-    }) as CB_Main[Channel.banner])
+    })
+    // endregion
 }
 
 export {

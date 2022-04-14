@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { version } from "../../public/manifest.json";
-import { bannerIpc } from "../stores/store_ipc";
+import { useIpcRenderer } from "../stores/store_ipc";
 
 type BannerOperates = 'min' | 'refresh' | 'max' | 'close'
 const doBannerOperate = (op: BannerOperates) => {
@@ -11,7 +11,7 @@ const doBannerOperate = (op: BannerOperates) => {
         case 'min':
         case 'max':
         case 'close':
-            bannerIpc(op)
+            useIpcRenderer().send('banner', { type: op })
             break
     }
 }

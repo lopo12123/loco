@@ -6,10 +6,14 @@ import { useToastStore } from "../stores/store_toast";
 import { onBeforeMount } from "vue";
 
 const router = useRouter()
+const baseDir = useGitStore().useBaseDir()
+const remoteInfo = useGitStore().useRemoteInfo()
 const statusInfo = useGitStore().useStatusInfo()
 
+console.log(baseDir, remoteInfo, statusInfo)
+
 onBeforeMount(() => {
-    if(!statusInfo) {
+    if(!baseDir || !remoteInfo || !statusInfo) {
         useToastStore().warn('No git info available.')
         router.push({
             name: 'Starter'
@@ -20,19 +24,29 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <div class="git-view" v-if="statusInfo">
+    <div class="git-view" v-if="baseDir && remoteInfo && statusInfo">
         <div class="head">
             <div class="line">
-                提交(commit, compare with remote):
-                超前(ahead) <span class="highlight">{{ statusInfo.ahead }}</span> 条;
-                滞后(behind) <span class="highlight">{{ statusInfo.behind }}</span> 条.
+                <span class="h-key">git文件路径(root path):</span>
+                {{ baseDir }}
             </div>
             <div class="line">
-                变更(changes):
-                新增(created) <span class="highlight">{{ statusInfo.created.length }}</span> 项;
-                删除(deleted) <span class="highlight">{{ statusInfo.deleted.length }}</span> 项;
-                修改(modified) <span class="highlight">{{ statusInfo.modified.length }}</span> 项;
-                重命名(renamed) <span class="highlight">{{ statusInfo.renamed.length }}</span> 项.
+                <span class="h-key">远程(remote):</span>
+                名称(name) <span class="h-val">{{ remoteInfo[0] }}</span>;
+                地址(url) <span class="h-val">{{ remoteInfo[1] }}</span>
+            </div>
+            <div class="line">
+                <span class="h-key">提交(commit):</span>
+                [compare with remote]
+                超前(ahead) <span class="h-val">{{ statusInfo.ahead }}</span> 条;
+                滞后(behind) <span class="h-val">{{ statusInfo.behind }}</span> 条.
+            </div>
+            <div class="line">
+                <span class="h-key">变更(changes):</span>
+                新增(created) <span class="h-val">{{ statusInfo.created.length }}</span> 项;
+                删除(deleted) <span class="h-val">{{ statusInfo.deleted.length }}</span> 项;
+                修改(modified) <span class="h-val">{{ statusInfo.modified.length }}</span> 项;
+                重命名(renamed) <span class="h-val">{{ statusInfo.renamed.length }}</span> 项.
             </div>
         </div>
         <div class="body">
@@ -45,8 +59,8 @@ onBeforeMount(() => {
             <div class="line" v-for="(item, index) in statusInfo.files" :key="index">
                 <div class="index">{{ index + 1 }}</div>
                 <div class="marker">
-<!--                    <GitMarker :mark="item.index"/>-->
-<!--                    <GitMarker :mark="item.working_dir"/>-->
+                    <!--                    <GitMarker :mark="item.index"/>-->
+                    <!--                    <GitMarker :mark="item.working_dir"/>-->
                 </div>
                 <div class="filename">{{ item.path }}</div>
             </div>
@@ -67,6 +81,8 @@ onBeforeMount(() => {
         position: relative;
         width: 100%;
         height: 100px;
+        user-select: none;
+        cursor: default;
 
         .line {
             position: relative;
@@ -74,7 +90,11 @@ onBeforeMount(() => {
             min-height: 30px;
             line-height: 30px;
 
-            .highlight {
+            .h-key {
+                color: #bfeeee;
+            }
+
+            .h-val {
                 color: #9feaf9;
             }
         }

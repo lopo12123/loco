@@ -66,7 +66,7 @@ const setIpc = (winRef: BrowserWindow | null) => {
     ipcMain.on('gitDetect', (e) => {
         exec('git --version', (err, stdout) => {
             if(err) e.reply('gitDetectReply', [ false, err.message ])
-            else e.reply('gitDetectReply', [ true, stdout.replace(/[\n ]/g, '') ])
+            else e.reply('gitDetectReply', [ true, stdout.replace(/[\n]/g, '') ])
         })
     })
     ipcMain.on('gitInit', (e, { filePath }) => {

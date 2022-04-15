@@ -46,14 +46,20 @@ const setIpc = (winRef: BrowserWindow | null) => {
     // region [explorer]
     ipcMain.on('explorer', (e, { dirPath }) => {
         const dirToOpen = resolvePath(...dirPath)
-        exec(`explorer ${dirToOpen}`, (err) => {
-            if(err) e.reply('explorerReply', [false, err.message])
-            else e.reply('explorerReply', [true, 'success'])
+        exec(`explorer /select, ${ dirToOpen }`, (err) => {
+            if(err) e.reply('explorerReply', [ false, err.message ])
+            else e.reply('explorerReply', [ true, 'success' ])
         })
     })
     // endregion
 
-    // region [git<Command>] <Command>= 'Init' | 'Log' | 'Status'
+    // region [git<Command>] <Command>= 'Detect' | 'Init' | 'Log' | 'Status'
+    ipcMain.on('gitDetect', (e) => {
+        exec('git --version', (err, stdout) => {
+            if(err) e.reply('gitDetectReply', [ false, err.message ])
+            else e.reply('gitDetectReply', [ true, stdout.replace(/[\n ]/g, '') ])
+        })
+    })
     ipcMain.on('gitInit', (e, { filePath }) => {
         useGit().init(filePath)
             .then((self) => {

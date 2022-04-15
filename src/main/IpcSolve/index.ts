@@ -45,10 +45,10 @@ const setIpc = (winRef: BrowserWindow | null) => {
     ipcMain.on('gitInit', (e, { filePath }) => {
         useGit().init(filePath)
             .then((self) => {
-                return self.cmd_status()
+                return Promise.all([ self.cmd_remote(), self.cmd_status() ])
             })
-            .then((res) => {
-                e.reply('gitInitReply', shakeFn([ true, res ]))
+            .then(([ remoteInfo, statusInfo ]) => {
+                e.reply('gitInitReply', shakeFn([ true, { remoteInfo, statusInfo } ]))
             })
             .catch((err) => {
                 if(err instanceof Error) err = err.message
@@ -59,7 +59,7 @@ const setIpc = (winRef: BrowserWindow | null) => {
     ipcMain.on('gitLog', (e, args) => {
         useGit().cmd_log()
             .then((res) => {
-                e.reply('gitLogReply', shakeFn([true, res]))
+                e.reply('gitLogReply', shakeFn([ true, res ]))
             })
             .catch((err) => {
                 if(err instanceof Error) err = err.message

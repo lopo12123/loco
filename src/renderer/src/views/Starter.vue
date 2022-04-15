@@ -31,6 +31,7 @@ const solveGitPath = (path: string) => {
         infoConfig.value = InfoPair.free
         if(res) {
             useToastStore().info('parsed')
+            useGitStore().useBaseDir(path)
             useGitStore().useStatusInfo(msg)
             router.push({ name: 'GitView' })
         }

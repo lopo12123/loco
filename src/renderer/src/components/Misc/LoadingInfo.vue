@@ -27,6 +27,7 @@ const props = withDefaults(defineProps<{
 .loading-info {
     position: relative;
     min-width: 100px;
+    max-width: 300px;
     width: fit-content;
     height: 30px;
     user-select: none;

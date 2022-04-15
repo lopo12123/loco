@@ -4,13 +4,12 @@ import GitMarker from "../components/GitView/GitMarker.vue";
 import { useRouter } from "vue-router";
 import { useToastStore } from "../stores/store_toast";
 import { onBeforeMount } from "vue";
+import { useIpcRenderer } from "../stores/store_ipc";
 
 const router = useRouter()
 const baseDir = useGitStore().useBaseDir()
 const remoteInfo = useGitStore().useRemoteInfo()
 const statusInfo = useGitStore().useStatusInfo()
-
-console.log(baseDir, remoteInfo, statusInfo)
 
 onBeforeMount(() => {
     if(!baseDir || !remoteInfo || !statusInfo) {
@@ -21,14 +20,22 @@ onBeforeMount(() => {
     }
 })
 
+const openInExplorer = (type: 'base' | 'file', filePath: string) => {
+    if(type === 'base') {
+        useIpcRenderer().send('explorer', { dirPath: [ baseDir, '..' ] })
+    }
+    else {
+        useIpcRenderer().send('explorer', { dirPath: [ baseDir, '..', filePath ] })
+    }
+}
 </script>
 
 <template>
     <div class="git-view" v-if="baseDir && remoteInfo && statusInfo">
         <div class="head">
             <div class="line">
-                <span class="h-key">git文件路径(root path):</span>
-                {{ baseDir }}
+                <span class="h-key">git文件路径(root path) </span>
+                <span class="link" @click="openInExplorer('base', '')">{{ baseDir }}</span>
             </div>
             <div class="line">
                 <span class="h-key">远程(remote):</span>
@@ -62,7 +69,9 @@ onBeforeMount(() => {
                     <!--                    <GitMarker :mark="item.index"/>-->
                     <!--                    <GitMarker :mark="item.working_dir"/>-->
                 </div>
-                <div class="filename">{{ item.path }}</div>
+                <div class="filename">
+                    <span class="link" @click="openInExplorer('file', item.path)">{{ item.path }}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -76,12 +85,20 @@ onBeforeMount(() => {
     width: 100%;
     height: 100%;
     font-family: cursive;
+    user-select: none;
+
+    .link {
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 
     .head {
         position: relative;
         width: 100%;
-        height: 100px;
-        user-select: none;
+        height: 120px;
         cursor: default;
 
         .line {

@@ -17,7 +17,7 @@ class Store_git {
         }
         else {
             try {
-                return JSON.parse(localStorage.getItem('git-version')!) as string
+                return localStorage.getItem('git-version') as string
             }
             catch (e) {
                 return null

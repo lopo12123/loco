@@ -1,18 +1,21 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 
-import Starter from "../views/Starter.vue";
-
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
         redirect: {
-            name: 'Starter'
+            name: 'Initializer'
         }
+    },
+    {
+        path: '/initializer',
+        name: 'Initializer',
+        component: () => import("@renderer/views/Initializer.vue")
     },
     {
         path: '/starter',
         name: 'Starter',
-        component: Starter
+        component: () => import("@renderer/views/Starter.vue")
     },
     {
         path: '/git-view',

@@ -5,17 +5,19 @@ const props = withDefaults(defineProps<{
     icon?: string
     spin?: boolean
     text?: string
+    blink?: boolean
 }>(), {
     icon: 'pi pi-sync',
     spin: true,
-    text: 'loading'
+    text: 'loading',
+    blink: true
 })
 </script>
 
 <template>
     <div class="loading-info">
         <i :class="[props.icon, props.spin ? 'pi-spin' : '']"/>
-        <span class="blink">
+        <span :class="props.blink ? 'blink' : 'default'">
             {{ props.text }}
         </span>
     </div>
@@ -30,6 +32,7 @@ const props = withDefaults(defineProps<{
     max-width: 300px;
     width: fit-content;
     height: 30px;
+    line-height: 18px;
     user-select: none;
     display: flex;
     align-items: center;
@@ -43,6 +46,11 @@ const props = withDefaults(defineProps<{
 
     .blink {
         @include mixin.doBlink(3s);
+        position: relative;
+        width: fit-content;
+        display: inline-block;
+    }
+    .default {
         position: relative;
         width: fit-content;
         display: inline-block;

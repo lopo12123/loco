@@ -1,10 +1,22 @@
 <script lang="ts" setup>
 import { version } from "../../public/manifest.json";
 import { useIpcRenderer } from "../stores/store_ipc";
+import { useRoute, useRouter } from "vue-router";
+import { computed } from "vue";
 
-type BannerOperates = 'min' | 'refresh' | 'max' | 'close'
+const route = useRoute()
+const router = useRouter()
+
+const ifShowHomeBtn = computed(() => {
+    return (route.name ?? '') as string
+})
+
+type BannerOperates = 'home' | 'min' | 'refresh' | 'max' | 'close'
 const doBannerOperate = (op: BannerOperates) => {
     switch(op) {
+        case 'home':
+            router.push({ name: 'Starter' })
+            break
         case 'refresh':
             window.location.reload()
             break
@@ -25,6 +37,11 @@ const doBannerOperate = (op: BannerOperates) => {
         </div>
 
         <div class="btn-group">
+            <div v-if="ifShowHomeBtn !== 'Starter'"
+                 class="btn hover-spin"
+                 @click="doBannerOperate('home')">
+                <i class="iconfont icon-home"/>
+            </div>
             <div class="btn hover-spin"
                  @click="doBannerOperate('min')">
                 <i class="iconfont icon-zuixiaohua"/>
@@ -88,7 +105,7 @@ const doBannerOperate = (op: BannerOperates) => {
             position: relative;
             width: 30px;
             height: 30px;
-            margin: 0 5px;
+            //margin: 0 5px;
             border-radius: 5px;
             line-height: 30px;
             text-align: center;

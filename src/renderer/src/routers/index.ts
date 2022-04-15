@@ -1,18 +1,18 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 
-import Welcome from "@renderer/views/Welcome.vue";
+import Starter from "../views/Starter.vue";
 
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
         redirect: {
-            name: 'Welcome'
+            name: 'starter'
         }
     },
     {
-        path: '/welcome',
-        name: 'Welcome',
-        component: Welcome
+        path: '/starter',
+        name: 'Starter',
+        component: Starter
     },
     {
         path: '/git-view',

@@ -16,6 +16,14 @@ class Store_git {
                 ? sessionStorage.removeItem('base-dir')
                 : sessionStorage.setItem('base-dir', JSON.stringify(dir))
         }
+        else {
+            try {
+                return JSON.parse(sessionStorage.getItem('base-dir')!) as string
+            }
+            catch (e) {
+                return null
+            }
+        }
     }
 
     // endregion

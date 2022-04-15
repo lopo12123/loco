@@ -1,12 +1,12 @@
 import simpleGit, { SimpleGit, StatusResult } from "simple-git";
-import { join, resolve } from "path";
+import { join as joinPath, resolve as resolvePath } from "path";
 
 class Git {
     #git: SimpleGit | null = null
 
     init(path: string) {
-        path = resolve(path)
-        if(path.endsWith('.git')) path = join(path, '..')
+        path = resolvePath(path)
+        if(path.endsWith('.git')) path = joinPath(path, '..')
         return new Promise<Git>((resolve, reject) => {
             this.#git = simpleGit(path)
             this.#git.checkIsRepo((err, ifRepo) => {
@@ -29,7 +29,7 @@ class Git {
         })
     }
 
-    cmd_status() {
+    cmd_status(): Promise<StatusResult> {
         return new Promise<StatusResult>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
             else this.#git.status((err, data) => {
@@ -37,10 +37,53 @@ class Git {
             })
         })
     }
+
+    cmd_remote(): Promise<[ string, string ]> {
+        return new Promise<[ string, string ]>((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else {
+                let remoteName = ''
+                this.#git
+                    .remote([])
+                    .then((res) => {
+                        if(!res) {
+                            return Promise.resolve('')
+                        }
+                        else {
+                            remoteName = res.replace(/[\n ]/g, '')
+                            return this.#git!.remote([ 'get-url', remoteName ])
+                        }
+                    })
+                    .then((remoteUrl) => {
+                        if(!remoteUrl) resolve([ remoteName, '' ])
+                        else resolve([ remoteName, remoteUrl.replace(/[\n ]/g, '') ])
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    })
+            }
+        })
+    }
 }
 
 const _ = new Git()
 export const useGit = () => _
+
+// test: remote
+// console.time('remote')
+// _.init('.')
+//     .then((self) => {
+//         return self.cmd_remote()
+//     })
+//     .then((res) => {
+//         // console.timeEnd('remote')
+//         console.log(res, typeof res, '[' + res + ']')
+//
+//         const str = ""
+//     })
+//     .catch((err) => {
+//         console.log(err)
+//     })
 
 // test: log
 // console.time('log')

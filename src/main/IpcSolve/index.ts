@@ -1,4 +1,6 @@
 import { app, BrowserWindow, ipcMain } from "electron";
+import { exec } from "child_process";
+import { resolve as resolvePath } from "path";
 import { useGit } from "../GitLocal";
 
 // region custom fn
@@ -41,7 +43,17 @@ const setIpc = (winRef: BrowserWindow | null) => {
     })
     // endregion
 
-    // region [git:<command>] <command>= 'init' | 'log' | 'status'
+    // region [explorer]
+    ipcMain.on('explorer', (e, { dirPath }) => {
+        const dirToOpen = resolvePath(...dirPath)
+        exec(`explorer ${dirToOpen}`, (err) => {
+            if(err) e.reply('explorerReply', [false, err.message])
+            else e.reply('explorerReply', [true, 'success'])
+        })
+    })
+    // endregion
+
+    // region [git<Command>] <Command>= 'Init' | 'Log' | 'Status'
     ipcMain.on('gitInit', (e, { filePath }) => {
         useGit().init(filePath)
             .then((self) => {

@@ -48,7 +48,7 @@ const solveGitPath = (path: string) => {
 </script>
 
 <template>
-    <div class="welcome">
+    <div class="starter">
         <div class="receive-container">
             <FileReceiver @file-drop="solveGitPath"/>
         </div>
@@ -61,7 +61,7 @@ const solveGitPath = (path: string) => {
 </template>
 
 <style lang="scss" scoped>
-.welcome {
+.starter {
     position: relative;
     width: 100%;
     height: 100%;

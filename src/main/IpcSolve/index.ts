@@ -43,6 +43,15 @@ const setIpc = (winRef: BrowserWindow | null) => {
     })
     // endregion
 
+    // region [browser]
+    ipcMain.on('browser', (e, { urlToOpen }) => {
+        exec(`start ${ urlToOpen }`, (err) => {
+            if(err) e.reply('browserReply', [false, err.message])
+            else e.reply('browserReply', [true, 'success'])
+        })
+    })
+    // endregion
+
     // region [explorer]
     ipcMain.on('explorer', (e, { dirPath }) => {
         const dirToOpen = resolvePath(...dirPath)

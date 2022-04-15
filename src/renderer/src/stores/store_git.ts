@@ -1,20 +1,40 @@
 import { StatusResult } from "simple-git";
 
 type StatusInfo = Omit<StatusResult, 'isClean'> | null
-type LogInfo = Omit<StatusResult, 'isClean'> | null
 
 /**
  * @description sync store using sessionStorage
  */
 class Store_git {
+    // region git version (to check if command 'git' is available)
+    useGitVersion(): string | null
+    useGitVersion(val: string): void
+    useGitVersion(val?: string): string | null | void {
+        if(val !== undefined) {
+            val === null
+                ? localStorage.removeItem('git-version')
+                : localStorage.setItem('git-version', val)
+        }
+        else {
+            try {
+                return JSON.parse(localStorage.getItem('git-version')!) as string
+            }
+            catch (e) {
+                return null
+            }
+        }
+    }
+
+    // endregion
+
     // region basedir (absolute path of .git)
     useBaseDir(): string | null
-    useBaseDir(dir: string | null): void
-    useBaseDir(dir?: string | null): string | null | void {
-        if(dir !== undefined) {
-            dir === null
+    useBaseDir(val: string | null): void
+    useBaseDir(val?: string | null): string | null | void {
+        if(val !== undefined) {
+            val === null
                 ? sessionStorage.removeItem('base-dir')
-                : sessionStorage.setItem('base-dir', JSON.stringify(dir))
+                : sessionStorage.setItem('base-dir', JSON.stringify(val))
         }
         else {
             try {

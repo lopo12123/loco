@@ -57,10 +57,26 @@ const setIpc = (winRef: BrowserWindow | null) => {
             })
     })
     ipcMain.on('gitLog', (e, args) => {
-
+        useGit().cmd_log()
+            .then((res) => {
+                e.reply('gitLogReply', shakeFn([true, res]))
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitLogReply', shakeFn([ false, err ]))
+            })
     })
     ipcMain.on('gitStatus', (e, args) => {
-
+        useGit().cmd_status()
+            .then((res) => {
+                e.reply('gitStatusReply', shakeFn([ true, res ]))
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitStatusReply', shakeFn([ false, err ]))
+            })
     })
     // endregion
 }

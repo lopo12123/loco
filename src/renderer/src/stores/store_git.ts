@@ -7,7 +7,7 @@ type LogInfo = Omit<StatusResult, 'isClean'> | null
  * @description sync store using sessionStorage
  */
 class Store_git {
-    // region basedir
+    // region basedir (absolute path of .git)
     useBaseDir(): string | null
     useBaseDir(dir: string | null): void
     useBaseDir(dir?: string | null): string | null | void {
@@ -21,7 +21,29 @@ class Store_git {
     // endregion
 
     // region log
-    #logInfo: LogInfo = null
+
+    // endregion
+
+    // region remote
+    useRemoteInfo(): [ string, string ] | null
+    useRemoteInfo(val: [ string, string ]): void
+    useRemoteInfo(val?: [ string, string ]): [ string, string ] | null | void {
+        // val: [remoteName, remoteUrl]
+        if(val !== undefined) {
+            val === null
+                ? sessionStorage.removeItem('remote-info')
+                : sessionStorage.setItem('remote-info', JSON.stringify(val))
+        }
+        else {
+            try {
+                return JSON.parse(sessionStorage.getItem('remote-info')!) as [ string, string ]
+            }
+            catch (e) {
+                return null
+            }
+        }
+    }
+
     // endregion
 
     // region status
@@ -35,7 +57,7 @@ class Store_git {
         }
         else {
             try {
-                return JSON.parse(sessionStorage.getItem('status-info') ?? '') as StatusInfo
+                return JSON.parse(sessionStorage.getItem('status-info')!) as StatusInfo
             }
             catch (e) {
                 return null

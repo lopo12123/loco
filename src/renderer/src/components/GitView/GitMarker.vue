@@ -14,13 +14,13 @@ const MarkConfig: {
         front: '#16B42C',
         back: '#85f399',
         mark: '=',
-        title: '文件未修改'
+        title: '文件索引未变更'
     },
     M: {
         front: '#b28c00',
         back: '#f7e79f',
         mark: 'M',
-        title: '文件已修改(modified)'
+        title: '文件内容已修改(modified)'
     },
     T: {
         front: '#063fdb',
@@ -31,32 +31,32 @@ const MarkConfig: {
     A: {
         front: '#067d17',
         back: '#b5e7be',
-        mark: 'M',
-        title: '新增的(added)'
+        mark: 'A',
+        title: '新增的文件(added)'
     },
     D: {
         front: '#ce0505',
         back: '#fca4a7',
         mark: 'D',
-        title: '已删除(deleted)'
+        title: '文件已删除(deleted)'
     },
     R: {
         front: '#028e8e',
         back: '#bfeeee',
         mark: 'R',
-        title: '重命名(renamed)'
+        title: '文件已重命名(renamed)'
     },
     C: {
         front: '#b309b3',
         back: '#f3d2f3',
         mark: 'C',
-        title: '复制(copied)'
+        title: '文件已复制(copied)'
     },
     U: {
         front: '#2d61f0',
         back: '#95c2ff',
         mark: 'U',
-        title: '更新但未合并(unmerged)'
+        title: '文件已更新但未合并(unmerged)'
     },
     '?': {
         front: '#929292',

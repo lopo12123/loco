@@ -3,10 +3,13 @@ import { version } from "../../public/manifest.json";
 import { useIpcRenderer } from "../stores/store_ipc";
 import { useRoute, useRouter } from "vue-router";
 import { computed } from "vue";
+import { useGitStore } from "../stores/store_git";
 
 const route = useRoute()
 const router = useRouter()
 
+const appVersion = version
+const gitVersion = useGitStore().useGitVersion()
 const ifShowHomeBtn = computed(() => {
     return (route.name ?? '') as string
 })
@@ -33,7 +36,8 @@ const doBannerOperate = (op: BannerOperates) => {
     <div class="app-banner">
         <div class="tag">
             <img class="logo" src="" alt="logo">
-            <span class="version">v{{ version }}</span>
+            <span class="app-version">[app version {{ appVersion }}]</span>
+            <span v-if="gitVersion !== null" class="git-version">[{{ gitVersion }}]</span>
         </div>
 
         <div class="btn-group">
@@ -84,10 +88,14 @@ const doBannerOperate = (op: BannerOperates) => {
         justify-content: flex-start;
 
         .logo {
-            margin-right: 5px;
         }
 
-        .version {
+        .app-version {
+            margin-left: 10px;
+            font-size: 10px;
+        }
+        .git-version {
+            margin-left: 10px;
             font-size: 10px;
         }
     }

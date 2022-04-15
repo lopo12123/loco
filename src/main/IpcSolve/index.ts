@@ -68,7 +68,7 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 e.reply('gitInitReply', shakeFn([ false, err ]))
             })
     })
-    ipcMain.on('gitLog', (e, args) => {
+    ipcMain.on('gitLog', (e) => {
         useGit().cmd_log()
             .then((res) => {
                 e.reply('gitLogReply', shakeFn([ true, res ]))
@@ -79,7 +79,7 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 e.reply('gitLogReply', shakeFn([ false, err ]))
             })
     })
-    ipcMain.on('gitStatus', (e, args) => {
+    ipcMain.on('gitStatus', (e) => {
         useGit().cmd_status()
             .then((res) => {
                 e.reply('gitStatusReply', shakeFn([ true, res ]))

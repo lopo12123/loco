@@ -1,7 +1,12 @@
 /**
+ * @description git简短输出的字符
+ */
+type GitMark = ' ' | 'M' | 'T' | 'A' | 'D' | 'R' | 'C' | 'U' | '?' | '!'
+
+/**
  * @description git简短输出的字符含义
  */
-const SymbolMeaningMap: {[k: string]: string} = {
+const SymbolMeaningMap: { [k in GitMark]: string } = {
     ' ': '文件未修改',
     M: '文件已修改(modified)',
     T: '文件类型改变(type changed)',
@@ -16,4 +21,7 @@ const SymbolMeaningMap: {[k: string]: string} = {
 
 export {
     SymbolMeaningMap
+}
+export type {
+    GitMark
 }

@@ -1,10 +1,11 @@
 import simpleGit, { SimpleGit, StatusResult } from "simple-git";
-import { join } from "path";
+import { join, resolve } from "path";
 
 class Git {
     #git: SimpleGit | null = null
 
     init(path: string) {
+        path = resolve(path)
         if(path.endsWith('.git')) path = join(path, '..')
         return new Promise<Git>((resolve, reject) => {
             this.#git = simpleGit(path)
@@ -56,8 +57,10 @@ export const useGit = () => _
 //     })
 
 // test: status
-// _.init('.')
-//     .cmd_status()
+// _.init("D:\\GitProjects\\loco\\.git")
+//     .then((self) => {
+//         return self.cmd_status()
+//     })
 //     .then((res) => {
 //         console.log(res)
 //     })

@@ -24,6 +24,11 @@ const InfoPair = {
 const infoConfig = ref(InfoPair.free)
 
 const solveGitPath = (path: string) => {
+    if(!path.endsWith('.git')) {
+        useToastStore().warn('Only .git files are accepted.')
+        return
+    }
+
     infoConfig.value = InfoPair.block
     useToastStore().info('parsing')
     useIpcRenderer().send('gitInit', { filePath: path })

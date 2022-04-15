@@ -32,16 +32,18 @@ const solveGitPath = (path: string) => {
     infoConfig.value = InfoPair.block
     useToastStore().info('parsing')
     useIpcRenderer().send('gitInit', { filePath: path })
-    useIpcRenderer().once('gitInitReply', (e, [ res, msg ]) => {
+    useIpcRenderer().once('gitInitReply', (e, [ res, groupedInfo ]) => {
         infoConfig.value = InfoPair.free
         if(res) {
+            const { remoteInfo, statusInfo } = groupedInfo
             useToastStore().info('parsed')
             useGitStore().useBaseDir(path)
-            useGitStore().useStatusInfo(msg)
+            useGitStore().useRemoteInfo(remoteInfo)
+            useGitStore().useStatusInfo(statusInfo)
             router.push({ name: 'GitView' })
         }
         else {
-            useToastStore().error(msg)
+            useToastStore().error(groupedInfo)
         }
     })
 }

@@ -3,6 +3,11 @@ import LoadingInfo from "../components/Misc/LoadingInfo.vue";
 import FileReceiver from "../components/Misc/FileReceiver.vue";
 import { ref } from "vue";
 import { useIpcRenderer } from "../stores/store_ipc";
+import { useToastStore } from "../stores/store_toast";
+import { useGitStore } from "../stores/store_git";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 
 const InfoPair = {
     free: {
@@ -20,14 +25,19 @@ const infoConfig = ref(InfoPair.free)
 
 const solveGitPath = (path: string) => {
     infoConfig.value = InfoPair.block
-    console.log(path.toString(), path)
-    useIpcRenderer().send('banner', { path: path })
-    // useIpcRenderer()
-    //     .send('git:base', { filePath: path })
-    // useIpcRenderer().once('git:base-reply', (e, args) => {
-    //     infoConfig.value = InfoPair.free
-    //     console.log(e, args)
-    // })
+    useToastStore().info('parsing')
+    useIpcRenderer().send('gitInit', { filePath: path })
+    useIpcRenderer().once('gitInitReply', (e, [ res, msg ]) => {
+        infoConfig.value = InfoPair.free
+        if(res) {
+            useToastStore().info('parsed')
+            useGitStore().useStatusInfo(msg)
+            router.push({ name: 'GitView' })
+        }
+        else {
+            useToastStore().error(msg)
+        }
+    })
 }
 </script>
 

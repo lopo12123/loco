@@ -1,6 +1,14 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import { useGit } from "../GitLocal";
-import { join } from "path";
+
+// region custom fn
+/**
+ * @description remove all the [function, symbol] param on origin object so that it can be send by ipc
+ */
+const shakeFn = <T>(ori: T): T => {
+    return JSON.parse(JSON.stringify(ori))
+}
+// endregion
 
 /**
  * @description set all event of ipcMain
@@ -26,27 +34,32 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 winRef = null
                 app.exit()
                 break
+            default:
+                console.log('Get invalid [type]: ' + type)
+                break
         }
     })
     // endregion
 
-    // region [git:<command>] <command>= 'base' | 'log' | 'status'
-    ipcMain.on('git:base', (e, { filePath }) => {
+    // region [git:<command>] <command>= 'init' | 'log' | 'status'
+    ipcMain.on('gitInit', (e, { filePath }) => {
         useGit().init(filePath)
             .then((self) => {
                 return self.cmd_status()
             })
             .then((res) => {
-                e.reply('git:base-reply', [ true, res ])
+                e.reply('gitInitReply', shakeFn([ true, res ]))
             })
             .catch((err) => {
-                e.reply('git:base-reply', [ false, err ])
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitInitReply', shakeFn([ false, err ]))
             })
     })
-    ipcMain.on('git:log', (e, args) => {
+    ipcMain.on('gitLog', (e, args) => {
 
     })
-    ipcMain.on('git:status', (e, args) => {
+    ipcMain.on('gitStatus', (e, args) => {
 
     })
     // endregion

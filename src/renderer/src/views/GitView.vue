@@ -22,8 +22,17 @@ onBeforeMount(() => {
 <template>
     <div class="git-view" v-if="statusInfo">
         <div class="head">
-            <div class="pair">
-                超出远程: {{ statusInfo.ahead }} 条提交
+            <div class="line">
+                提交(commit, compare with remote):
+                超前(ahead) <span class="highlight">{{ statusInfo.ahead }}</span> 条;
+                滞后(behind) <span class="highlight">{{ statusInfo.behind }}</span> 条.
+            </div>
+            <div class="line">
+                变更(changes):
+                新增(created) <span class="highlight">{{ statusInfo.created.length }}</span> 项;
+                删除(deleted) <span class="highlight">{{ statusInfo.deleted.length }}</span> 项;
+                修改(modified) <span class="highlight">{{ statusInfo.modified.length }}</span> 项;
+                重命名(renamed) <span class="highlight">{{ statusInfo.renamed.length }}</span> 项.
             </div>
         </div>
         <div class="body">
@@ -58,6 +67,17 @@ onBeforeMount(() => {
         position: relative;
         width: 100%;
         height: 100px;
+
+        .line {
+            position: relative;
+            width: 100%;
+            min-height: 30px;
+            line-height: 30px;
+
+            .highlight {
+                color: #9feaf9;
+            }
+        }
     }
 
     .body {

@@ -11,6 +11,7 @@ const router = useRouter()
 const baseDir = useGitStore().useBaseDir()
 const remoteInfo = useGitStore().useRemoteInfo()
 const statusInfoRef = ref(useGitStore().useStatusInfo())
+const selectList = ref<boolean[]>(new Array(statusInfoRef.value?.files?.length ?? 0))
 
 onBeforeMount(() => {
     if(!baseDir || !remoteInfo || !statusInfoRef.value) {
@@ -43,6 +44,7 @@ const updateGitInfo = () => {
         if(res) {
             useGitStore().useStatusInfo(statusInfo)
             statusInfoRef.value = statusInfo
+            selectList.value = new Array(statusInfo.files.length).fill(false)
             useToastStore().success('updated')
         }
         else {
@@ -93,14 +95,6 @@ const menuItems = [
 const toggleDropdown = (e: MouseEvent) => {
     menuRef.value?.toggle(e)
 }
-
-/**
- * @description 回退文件
- */
-const doRollBack = (path: string, disabled: boolean = false) => {
-    if(disabled) return;
-    console.log('回退: ', path)
-}
 </script>
 
 <template>
@@ -141,13 +135,17 @@ const doRollBack = (path: string, disabled: boolean = false) => {
         </div>
         <div class="body">
             <div class="line table-header">
+                <div class="select">√</div>
                 <div class="index">序号</div>
                 <div class="marker">类型</div>
                 <div class="filename">文件</div>
-                <div class="operate">操作</div>
             </div>
-
             <div class="line" v-for="(item, index) in statusInfoRef.files" :key="item.path">
+                <div class="select">
+                    <label>
+                        <input type="checkbox" v-model="selectList[index]">
+                    </label>
+                </div>
                 <div class="index">{{ index + 1 }}</div>
                 <div class="marker">
                     <GitMarker :mark="item.index"/>
@@ -158,11 +156,6 @@ const doRollBack = (path: string, disabled: boolean = false) => {
                           @click="openInExplorer('file', item.path)">
                         {{ item.path }}
                     </span>
-                </div>
-                <div class="operate">
-                    <div :class="['rollback', item.index === '?' ? 'disabled' : '']" title="rollback">
-                        <i class="iconfont icon-huitui" @click="doRollBack(item.path, item.index === '?')"/>
-                    </div>
                 </div>
             </div>
         </div>
@@ -278,6 +271,23 @@ const doRollBack = (path: string, disabled: boolean = false) => {
             align-items: center;
             justify-content: space-between;
 
+            .select {
+                width: 20px;
+
+                label {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    cursor: pointer;
+
+                    input {
+                        position: relative;
+                        width: 10px;
+                        height: 10px;
+                    }
+                }
+            }
+
             .index {
                 width: 60px;
             }
@@ -288,38 +298,9 @@ const doRollBack = (path: string, disabled: boolean = false) => {
 
             .filename {
                 @include mixin.doScrollbar(#aaaaaa, 2px);
-                width: calc(100% - 220px);
+                width: calc(100% - 140px);
                 white-space: nowrap;
                 overflow: auto hidden;
-            }
-
-            .operate {
-                width: 100px;
-                display: flex;
-                align-items: center;
-                justify-content: flex-end;
-
-                %btn-base {
-                    position: relative;
-                    width: 20px;
-                    height: 20px;
-                    border-radius: 5px;
-                    line-height: 20px;
-                    text-align: center;
-                    cursor: pointer;
-
-                    &:hover {
-                        background-color: #cccccc1a;
-                    }
-                }
-
-                .rollback {
-                    @extend %btn-base;
-                }
-
-                .disabled {
-                    cursor: not-allowed;
-                }
             }
         }
 

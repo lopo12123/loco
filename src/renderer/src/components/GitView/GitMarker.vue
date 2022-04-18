@@ -84,7 +84,7 @@ const tooltip = MarkConfig[props.mark]?.title ?? '未定义的标识(undefined)'
 
 <template>
     <div class="git-state-tag" :title="tooltip"
-         :style="`color:${front}; background-color: ${back}; border: solid 1px ${back}`">
+         :style="`color:${front}; background-color: ${back}1a;`">
         <span>{{ mark }}</span>
     </div>
 </template>

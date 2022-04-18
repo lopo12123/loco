@@ -71,8 +71,8 @@ class Store_git {
 
     // region remote
     useRemoteInfo(): [ string, string ] | null
-    useRemoteInfo(val: [ string, string ]): void
-    useRemoteInfo(val?: [ string, string ]): [ string, string ] | null | void {
+    useRemoteInfo(val: [ string, string ] | null): void
+    useRemoteInfo(val?: [ string, string ] | null): [ string, string ] | null | void {
         // val: [remoteName, remoteUrl]
         if(val !== undefined) {
             val === null
@@ -112,6 +112,17 @@ class Store_git {
 
     // endregion
 
+    // region clear (call this function when user clicked 'home' button)
+    clear() {
+        // same as 'sessionStorage.clear()'
+        sessionStorage.clear()
+        // this.useBaseDir(null)
+        // this.useLogInfo(null)
+        // this.useRemoteInfo(null)
+        // this.useStatusInfo(null)
+    }
+
+    // endregion
 }
 
 const _ = new Store_git()

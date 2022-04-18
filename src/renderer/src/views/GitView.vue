@@ -80,7 +80,7 @@ const toggleDropdown = (e: MouseEvent) => {
                 <span class="h-key">git路径(root) </span>
                 <span class="root-path" @click="openInExplorer('base', '')">{{ baseDir }}</span>
                 <div class="op-btn">
-                    <div class="btn" title="获取最新git记录"
+                    <div class="btn" title="获取最新状态"
                          @click="updateGitInfo">
                         <i class="iconfont icon-shuaxin"/>
                     </div>

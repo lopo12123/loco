@@ -1,8 +1,8 @@
 // 滚动条样式
-@mixin doScrollbar($color: #aaaaaa) {
+@mixin doScrollbar($color: #aaaaaa, $width: 8px) {
     &::-webkit-scrollbar {
-        width: 8px !important;
-        height: 8px !important;
+        width: $width !important;
+        height: $width !important;
     }
     &::-webkit-scrollbar-thumb {
         background-color: $color !important;
@@ -14,6 +14,7 @@
         opacity: 0 !important;
     }
 }
+
 
 // region 呼吸
 @keyframes _blink {
@@ -31,6 +32,7 @@
 @mixin doBlink($time: 1s) {
     animation: _blink $time infinite linear;
 }
+
 // endregion
 
 // region 流水
@@ -55,6 +57,7 @@
 @mixin doRGB($time: 1s) {
     animation: _rgb $time infinite linear;
 }
+
 // endregion
 
 // region 旋转
@@ -66,7 +69,9 @@
         transform: rotate(360deg);
     }
 }
+
 @mixin doSpin($time: 1s) {
     animation: _spin $time infinite linear;
 }
+
 // endregion

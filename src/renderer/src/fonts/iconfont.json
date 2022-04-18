@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "3742850",
+      "name": "靶子",
+      "font_class": "bazi",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
       "icon_id": "2432882",
       "name": "返回",
       "font_class": "back",

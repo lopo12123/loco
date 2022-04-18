@@ -22,20 +22,32 @@ onBeforeMount(() => {
 
 const openInExplorer = (type: 'base' | 'file', filePath: string) => {
     if(type === 'base') {
-        useIpcRenderer().send('explorer', { dirPath: [ baseDir, '..' ] })
+        useIpcRenderer().send('explorer', { dirPath: [ baseDir ] })
     }
     else {
         useIpcRenderer().send('explorer', { dirPath: [ baseDir, '..', filePath ] })
     }
+}
+
+const updateGitInfo = () => {
+
 }
 </script>
 
 <template>
     <div class="git-view" v-if="baseDir && remoteInfo && statusInfo">
         <div class="head">
-            <div class="line">
-                <span class="h-key">git文件路径(root path) </span>
-                <span class="link" @click="openInExplorer('base', '')">{{ baseDir }}</span>
+            <div class="line path-block">
+                <span class="h-key">git路径(root) </span>
+                <span class="root-path" @click="openInExplorer('base', '')">{{ baseDir }}</span>
+                <div class="op-btn">
+                    <div class="btn" title="获取最新git记录" @click="updateGitInfo">
+                        <i class="iconfont icon-shuaxin"/>
+                    </div>
+                    <div class="btn" title="设置">
+                        <i class="iconfont icon-set"/>
+                    </div>
+                </div>
             </div>
             <div class="line">
                 <span class="h-key">远程(remote):</span>
@@ -98,17 +110,70 @@ const openInExplorer = (type: 'base' | 'file', filePath: string) => {
     .head {
         position: relative;
         width: 100%;
-        height: 120px;
+        height: 130px;
         cursor: default;
 
+        .path-block {
+
+            &:hover {
+                .op-btn {
+                    opacity: 1;
+                }
+            }
+
+            .root-path {
+                //color: #9feaf9;
+                cursor: pointer;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+
+            .op-btn {
+                position: absolute;
+                z-index: 10;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                opacity: 0;
+                pointer-events: none;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                transition: opacity 1s ease;
+
+                .btn {
+                    position: relative;
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 5px;
+                    text-align: center;
+                    line-height: 30px;
+                    cursor: pointer;
+                    pointer-events: auto;
+                    &:hover {
+                        background-color: #cccccc1a;
+                    }
+                }
+            }
+        }
+
         .line {
+            @include mixin.doScrollbar(#aaaaaa, 2px);
             position: relative;
             width: 100%;
-            min-height: 30px;
+            height: 30px;
             line-height: 30px;
+            white-space: nowrap;
+            overflow: auto hidden;
 
             .h-key {
-                color: #bfeeee;
+                position: sticky;
+                left: 0;
+                color: khaki;
+                background-color: #2f3241;
             }
 
             .h-val {
@@ -118,10 +183,10 @@ const openInExplorer = (type: 'base' | 'file', filePath: string) => {
     }
 
     .body {
-        @include mixin.doScrollbar(#3f4669);
+        @include mixin.doScrollbar(#aaaaaa, 4px);
         position: relative;
         width: 100%;
-        height: calc(100% - 100px);
+        height: calc(100% - 130px);
         overflow: hidden auto;
 
         .line {

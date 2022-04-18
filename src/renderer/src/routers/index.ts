@@ -21,6 +21,11 @@ const routes: RouteRecordRaw[] = [
         path: '/git-view',
         name: 'GitView',
         component: () => import("@renderer/views/GitView.vue")
+    },
+    {
+        path: '/commit-history',
+        name: 'CommitHistory',
+        component: () => import("@renderer/views/CommitHistory.vue")
     }
 ]
 

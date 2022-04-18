@@ -68,7 +68,9 @@ const menuItems = [
         label: 'history',
         icon: 'iconfont icon-commit',
         command() {
-            console.log('go to history page')
+            router.push({
+                name: 'CommitHistory'
+            })
         }
     },
     {

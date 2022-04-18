@@ -58,10 +58,12 @@ const updateGitInfo = () => {
 const menuRef = ref<Menu | null>(null)
 const menuItems = [
     {
-        label: 'setting',
+        label: 'config',
         icon: 'iconfont icon-set',
         command() {
-            console.log('go to setting page')
+            router.push({
+                name: 'ConfigView'
+            })
         }
     },
     {
@@ -90,6 +92,13 @@ const menuItems = [
 ]
 const toggleDropdown = (e: MouseEvent) => {
     menuRef.value?.toggle(e)
+}
+
+/**
+ * @description 回退文件
+ */
+const doRollBack = (path: string) => {
+    console.log('回退: ', path)
 }
 </script>
 
@@ -151,7 +160,7 @@ const toggleDropdown = (e: MouseEvent) => {
                 </div>
                 <div class="operate">
                     <div class="rollback" title="rollback">
-                        <i class="iconfont icon-huitui"/>
+                        <i class="iconfont icon-huitui" @click="doRollBack(item.path)"/>
                     </div>
                 </div>
             </div>

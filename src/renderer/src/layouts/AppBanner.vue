@@ -79,8 +79,8 @@ const doBannerOperate = (op: BannerOperates) => {
     .tag {
         position: relative;
         width: fit-content;
-        height: 20px;
-        margin: 10px;
+        max-width: calc(100% - 200px);
+        margin: 0 10px;
         font-size: 12px;
         line-height: 20px;
         display: inline-flex;
@@ -90,19 +90,24 @@ const doBannerOperate = (op: BannerOperates) => {
         .logo {
         }
 
-        .app-version {
+        %version-base {
             margin-left: 10px;
             font-size: 10px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .app-version {
+            @extend %version-base;
         }
         .git-version {
-            margin-left: 10px;
-            font-size: 10px;
+            @extend %version-base;
         }
     }
 
     .btn-group {
         position: relative;
-        width: fit-content;
+        width: 120px;
         height: 100%;
         margin: 0 10px;
         display: flex;
@@ -113,7 +118,6 @@ const doBannerOperate = (op: BannerOperates) => {
             position: relative;
             width: 30px;
             height: 30px;
-            //margin: 0 5px;
             border-radius: 5px;
             line-height: 30px;
             text-align: center;

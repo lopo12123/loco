@@ -1,4 +1,4 @@
-import simpleGit, { SimpleGit, StatusResult } from "simple-git";
+import simpleGit, { LogResult, SimpleGit, StatusResult } from "simple-git";
 import { join as joinPath, resolve as resolvePath } from "path";
 
 class Git {
@@ -21,7 +21,7 @@ class Git {
     }
 
     cmd_log() {
-        return new Promise((resolve, reject) => {
+        return new Promise<LogResult>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
             else this.#git.log([], (err, data) => {
                 err ? reject(err) : resolve(data)

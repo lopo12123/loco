@@ -59,6 +59,20 @@ img {
     }
 }
 
+.p-menu {
+    width: 100px !important;
+    background-color: #2f3241 !important;
+
+    .p-menuitem-link {
+        padding: 5px 10px;
+        .p-menuitem-icon {
+            color: $font-color-highlight;
+        }
+        .p-menuitem-text {
+            color: $font-color-default;
+        }
+    }
+}
 // endregion
 
 // region custom

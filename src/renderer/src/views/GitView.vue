@@ -20,6 +20,10 @@ onBeforeMount(() => {
     }
 })
 
+/**
+ * @description 在系统explorer中打开并选中
+ * @description exec cmd: `explorer %path% /select`
+ */
 const openInExplorer = (type: 'base' | 'file', filePath: string) => {
     if(type === 'base') {
         useIpcRenderer().send('explorer', { dirPath: [ baseDir ] })
@@ -29,8 +33,20 @@ const openInExplorer = (type: 'base' | 'file', filePath: string) => {
     }
 }
 
+/**
+ * @description 获取最新的git信息
+ */
 const updateGitInfo = () => {
-
+    useIpcRenderer().send('gitStatus')
+    useIpcRenderer().once('gitStatusReply', (e, [ res, statusInfo ]) => {
+        if(res) {
+            useGitStore().useStatusInfo(statusInfo)
+            useToastStore().success('updated')
+        }
+        else {
+            useToastStore().error(statusInfo)
+        }
+    })
 }
 </script>
 
@@ -153,6 +169,7 @@ const updateGitInfo = () => {
                     line-height: 30px;
                     cursor: pointer;
                     pointer-events: auto;
+
                     &:hover {
                         background-color: #cccccc1a;
                     }

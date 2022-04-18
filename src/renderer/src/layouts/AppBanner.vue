@@ -36,7 +36,7 @@ const doBannerOperate = (op: BannerOperates) => {
 <template>
     <div class="app-banner">
         <div class="tag">
-            <img class="logo" src="" alt="logo">
+            <i class="iconfont icon-yongyan"/>
             <span class="app-version">[app version {{ appVersion }}]</span>
             <span v-if="gitVersion !== null" class="git-version">[{{ gitVersion }}]</span>
         </div>

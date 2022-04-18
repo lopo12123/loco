@@ -116,8 +116,8 @@ const toggleDropdown = (e: MouseEvent) => {
             </div>
             <div class="line">
                 <span class="h-key">远程(remote):</span>
-                名称(name) <span class="h-val">{{ remoteInfo[0] }}</span>;
-                地址(url) <span class="h-val">{{ remoteInfo[1] }}</span>
+                名称(name) <span class="h-val">{{ remoteInfo[0] === '' ? '暂无' : remoteInfo[0] }}</span>;
+                地址(url) <span class="h-val">{{ remoteInfo[1] === '' ? '暂无' : remoteInfo[1] }}</span>
             </div>
             <div class="line">
                 <span class="h-key">提交(commit):</span>
@@ -139,6 +139,9 @@ const toggleDropdown = (e: MouseEvent) => {
                 <div class="index">序号</div>
                 <div class="marker">类型</div>
                 <div class="filename">文件</div>
+                <div class="commit-btn" title="commit">
+                    <i class="iconfont icon-check"/>commit
+                </div>
             </div>
             <div class="line" v-for="(item, index) in statusInfoRef.files" :key="item.path">
                 <div class="select">
@@ -308,6 +311,33 @@ const toggleDropdown = (e: MouseEvent) => {
             position: sticky;
             top: 0;
             z-index: 10;
+
+            .commit-btn {
+                position: absolute;
+                width: 60px;
+                height: 20px;
+                top: 5px;
+                right: 0;
+                cursor: pointer;
+                line-height: 20px;
+                text-align: center;
+
+                &::after {
+                    position: absolute;
+                    content: "";
+                    height: 1px;
+                    width: 0;
+                    bottom: 0;
+                    left: 50%;
+                    background-color: #9feaf9;
+                    transition: all 0.2s linear;
+                }
+
+                &:hover::after {
+                    width: 100%;
+                    left: 0;
+                }
+            }
         }
     }
 }

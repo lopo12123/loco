@@ -147,7 +147,7 @@ const doRollBack = (path: string, disabled: boolean = false) => {
                 <div class="operate">操作</div>
             </div>
 
-            <div class="line" v-for="(item, index) in statusInfoRef.files" :key="index">
+            <div class="line" v-for="(item, index) in statusInfoRef.files" :key="item.path">
                 <div class="index">{{ index + 1 }}</div>
                 <div class="marker">
                     <GitMarker :mark="item.index"/>

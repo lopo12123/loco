@@ -51,6 +51,10 @@ const updateGitInfo = () => {
     })
 }
 
+/**
+ * @description 下拉菜单
+ * @description 包括 设置、历史、拉取、推送等
+ */
 const menuRef = ref<Menu | null>(null)
 const menuItems = [
     {
@@ -65,6 +69,20 @@ const menuItems = [
         icon: 'iconfont icon-commit',
         command() {
             console.log('go to history page')
+        }
+    },
+    {
+        label: 'pull',
+        icon: 'iconfont icon-jiantou_zuoxia',
+        command() {
+            console.log('do pull')
+        }
+    },
+    {
+        label: 'push',
+        icon: 'iconfont icon-jiantou_youshang',
+        command() {
+            console.log('do push')
         }
     }
 ]

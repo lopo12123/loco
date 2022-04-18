@@ -95,6 +95,21 @@ const menuItems = [
 const toggleDropdown = (e: MouseEvent) => {
     menuRef.value?.toggle(e)
 }
+
+/**
+ * @description 执行 git commit
+ */
+const doCommit = () => {
+    const filesToCommit: string[] = []
+    for(let i = 0; i < selectList.value.length; i ++) {
+        // todo
+    }
+
+    if(filesToCommit.length === 0) useToastStore().warn('select at least one file to commit.')
+    else {
+        // send ipc to backend
+    }
+}
 </script>
 
 <template>
@@ -140,7 +155,7 @@ const toggleDropdown = (e: MouseEvent) => {
                 <div class="index">序号</div>
                 <div class="marker">类型</div>
                 <div class="filename">文件</div>
-                <div class="commit-btn" title="commit">
+                <div class="commit-btn" title="commit selected files" @click="doCommit">
                     <i class="iconfont icon-check"/>commit
                 </div>
             </div>
@@ -269,7 +284,7 @@ const toggleDropdown = (e: MouseEvent) => {
         .line {
             position: relative;
             width: 100%;
-            height: 40px;
+            height: 30px;
             background-color: #2f3241;
             display: flex;
             align-items: center;

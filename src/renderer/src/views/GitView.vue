@@ -127,6 +127,7 @@ const toggleDropdown = (e: MouseEvent) => {
             </div>
             <div class="line">
                 <span class="h-key">变更(changes):</span>
+                共 <span class="h-val">{{ statusInfoRef.files.length }}</span> 项;
                 新增(created) <span class="h-val">{{ statusInfoRef.created.length }}</span> 项;
                 删除(deleted) <span class="h-val">{{ statusInfoRef.deleted.length }}</span> 项;
                 修改(modified) <span class="h-val">{{ statusInfoRef.modified.length }}</span> 项;

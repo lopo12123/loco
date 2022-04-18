@@ -3,16 +3,16 @@ import { useGitStore } from "../stores/store_git";
 import GitMarker from "../components/GitView/GitMarker.vue";
 import { useRouter } from "vue-router";
 import { useToastStore } from "../stores/store_toast";
-import { onBeforeMount } from "vue";
+import { onBeforeMount, ref } from "vue";
 import { useIpcRenderer } from "../stores/store_ipc";
 
 const router = useRouter()
 const baseDir = useGitStore().useBaseDir()
 const remoteInfo = useGitStore().useRemoteInfo()
-const statusInfo = useGitStore().useStatusInfo()
+const statusInfoRef = ref(useGitStore().useStatusInfo())
 
 onBeforeMount(() => {
-    if(!baseDir || !remoteInfo || !statusInfo) {
+    if(!baseDir || !remoteInfo || !statusInfoRef.value) {
         useToastStore().warn('No git info available.')
         router.push({
             name: 'Starter'
@@ -41,6 +41,7 @@ const updateGitInfo = () => {
     useIpcRenderer().once('gitStatusReply', (e, [ res, statusInfo ]) => {
         if(res) {
             useGitStore().useStatusInfo(statusInfo)
+            statusInfoRef.value = statusInfo
             useToastStore().success('updated')
         }
         else {
@@ -51,13 +52,14 @@ const updateGitInfo = () => {
 </script>
 
 <template>
-    <div class="git-view" v-if="baseDir && remoteInfo && statusInfo">
+    <div class="git-view" v-if="baseDir && remoteInfo && statusInfoRef">
         <div class="head">
             <div class="line path-block">
                 <span class="h-key">git路径(root) </span>
                 <span class="root-path" @click="openInExplorer('base', '')">{{ baseDir }}</span>
                 <div class="op-btn">
-                    <div class="btn" title="获取最新git记录" @click="updateGitInfo">
+                    <div class="btn" title="获取最新git记录"
+                         @click="updateGitInfo">
                         <i class="iconfont icon-shuaxin"/>
                     </div>
                     <div class="btn" title="设置">
@@ -73,15 +75,15 @@ const updateGitInfo = () => {
             <div class="line">
                 <span class="h-key">提交(commit):</span>
                 [compare with remote]
-                超前(ahead) <span class="h-val">{{ statusInfo.ahead }}</span> 条;
-                滞后(behind) <span class="h-val">{{ statusInfo.behind }}</span> 条.
+                超前(ahead) <span class="h-val">{{ statusInfoRef.ahead }}</span> 条;
+                滞后(behind) <span class="h-val">{{ statusInfoRef.behind }}</span> 条.
             </div>
             <div class="line">
                 <span class="h-key">变更(changes):</span>
-                新增(created) <span class="h-val">{{ statusInfo.created.length }}</span> 项;
-                删除(deleted) <span class="h-val">{{ statusInfo.deleted.length }}</span> 项;
-                修改(modified) <span class="h-val">{{ statusInfo.modified.length }}</span> 项;
-                重命名(renamed) <span class="h-val">{{ statusInfo.renamed.length }}</span> 项.
+                新增(created) <span class="h-val">{{ statusInfoRef.created.length }}</span> 项;
+                删除(deleted) <span class="h-val">{{ statusInfoRef.deleted.length }}</span> 项;
+                修改(modified) <span class="h-val">{{ statusInfoRef.modified.length }}</span> 项;
+                重命名(renamed) <span class="h-val">{{ statusInfoRef.renamed.length }}</span> 项.
             </div>
         </div>
         <div class="body">
@@ -89,16 +91,25 @@ const updateGitInfo = () => {
                 <div class="index">序号</div>
                 <div class="marker">类型</div>
                 <div class="filename">文件</div>
+                <div class="operate">操作</div>
             </div>
 
-            <div class="line" v-for="(item, index) in statusInfo.files" :key="index">
+            <div class="line" v-for="(item, index) in statusInfoRef.files" :key="index">
                 <div class="index">{{ index + 1 }}</div>
                 <div class="marker">
-                    <!--                    <GitMarker :mark="item.index"/>-->
-                    <!--                    <GitMarker :mark="item.working_dir"/>-->
+                    <GitMarker :mark="item.index"/>
+                    <GitMarker :mark="item.working_dir"/>
                 </div>
                 <div class="filename">
-                    <span class="link" @click="openInExplorer('file', item.path)">{{ item.path }}</span>
+                    <span class="link" :title="item.path"
+                          @click="openInExplorer('file', item.path)">
+                        {{ item.path }}
+                    </span>
+                </div>
+                <div class="operate">
+                    <div class="rollback" title="rollback">
+                        <i class="iconfont icon-huitui"/>
+                    </div>
                 </div>
             </div>
         </div>
@@ -138,7 +149,6 @@ const updateGitInfo = () => {
             }
 
             .root-path {
-                //color: #9feaf9;
                 cursor: pointer;
 
                 &:hover {
@@ -216,15 +226,43 @@ const updateGitInfo = () => {
             justify-content: space-between;
 
             .index {
-                width: 100px;
+                width: 60px;
             }
 
             .marker {
-                width: 100px;
+                width: 60px;
             }
 
             .filename {
-                width: calc(100% - 200px);
+                @include mixin.doScrollbar(#aaaaaa, 2px);
+                width: calc(100% - 220px);
+                white-space: nowrap;
+                overflow: auto hidden;
+            }
+
+            .operate {
+                width: 100px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+
+                %btn-base {
+                    position: relative;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 5px;
+                    line-height: 20px;
+                    text-align: center;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: #cccccc1a;
+                    }
+                }
+
+                .rollback {
+                    @extend %btn-base;
+                }
             }
         }
 

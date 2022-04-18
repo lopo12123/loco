@@ -1,4 +1,4 @@
-import { StatusResult } from "simple-git";
+import { LogResult, StatusResult } from "simple-git";
 
 type StatusInfo = Omit<StatusResult, 'isClean'> | null
 
@@ -49,6 +49,23 @@ class Store_git {
     // endregion
 
     // region log
+    useLogInfo(): LogResult | null
+    useLogInfo(val: LogResult | null): void
+    useLogInfo(val?: LogResult | null): LogResult | null | void {
+        if(val !== undefined) {
+            val === null
+                ? sessionStorage.removeItem('log-info')
+                : sessionStorage.setItem('log-info', JSON.stringify(val))
+        }
+        else {
+            try {
+                return JSON.parse(sessionStorage.getItem('log-info')!) as LogResult
+            }
+            catch (e) {
+                return null
+            }
+        }
+    }
 
     // endregion
 

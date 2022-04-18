@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "3973034",
+      "name": "点点点",
+      "font_class": "diandiandian",
+      "unicode": "e6b6",
+      "unicode_decimal": 59062
+    },
+    {
+      "icon_id": "248935",
+      "name": "tag",
+      "font_class": "tag",
+      "unicode": "e66c",
+      "unicode_decimal": 58988
+    },
+    {
+      "icon_id": "5428338",
+      "name": "commit",
+      "font_class": "commit",
+      "unicode": "e6b1",
+      "unicode_decimal": 59057
+    },
+    {
       "icon_id": "4767093",
       "name": "check",
       "font_class": "check",

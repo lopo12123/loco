@@ -18,6 +18,7 @@ type BannerOperates = 'home' | 'min' | 'refresh' | 'max' | 'close'
 const doBannerOperate = (op: BannerOperates) => {
     switch(op) {
         case 'home':
+            useGitStore().clear()
             router.push({ name: 'Starter' })
             break
         case 'refresh':
@@ -97,9 +98,11 @@ const doBannerOperate = (op: BannerOperates) => {
             white-space: nowrap;
             text-overflow: ellipsis;
         }
+
         .app-version {
             @extend %version-base;
         }
+
         .git-version {
             @extend %version-base;
         }

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { useGitStore } from "../stores/store_git";
 import GitMarker from "../components/GitView/GitMarker.vue";
+import Menu from "primevue/menu";
+import { useGitStore } from "../stores/store_git";
 import { useRouter } from "vue-router";
 import { useToastStore } from "../stores/store_toast";
 import { onBeforeMount, ref } from "vue";
@@ -49,6 +50,27 @@ const updateGitInfo = () => {
         }
     })
 }
+
+const menuRef = ref<Menu | null>(null)
+const menuItems = [
+    {
+        label: 'setting',
+        icon: 'iconfont icon-set',
+        command() {
+            console.log('go to setting page')
+        }
+    },
+    {
+        label: 'history',
+        icon: 'iconfont icon-commit',
+        command() {
+            console.log('go to history page')
+        }
+    }
+]
+const toggleDropdown = (e: MouseEvent) => {
+    menuRef.value?.toggle(e)
+}
 </script>
 
 <template>
@@ -62,9 +84,10 @@ const updateGitInfo = () => {
                          @click="updateGitInfo">
                         <i class="iconfont icon-shuaxin"/>
                     </div>
-                    <div class="btn" title="设置">
-                        <i class="iconfont icon-set"/>
+                    <div class="btn" @click="toggleDropdown">
+                        <i class="iconfont icon-diandiandian"/>
                     </div>
+                    <Menu ref="menuRef" class="more-menu" :model="menuItems" :popup="true"/>
                 </div>
             </div>
             <div class="line">
@@ -163,7 +186,7 @@ const updateGitInfo = () => {
                 height: 100%;
                 top: 0;
                 left: 0;
-                opacity: 0;
+                opacity: 1; // 0;
                 pointer-events: none;
                 display: flex;
                 align-items: center;

@@ -102,12 +102,14 @@ const toggleDropdown = (e: MouseEvent) => {
 const doCommit = () => {
     const filesToCommit: string[] = []
     for(let i = 0; i < selectList.value.length; i ++) {
-        // todo
+        if(selectList.value[i]) {
+            filesToCommit.push(statusInfoRef.value.files[i].path)
+        }
     }
-
     if(filesToCommit.length === 0) useToastStore().warn('select at least one file to commit.')
     else {
         // send ipc to backend
+        useToastStore().info('todo: send ipc')
     }
 }
 </script>
@@ -151,7 +153,7 @@ const doCommit = () => {
         </div>
         <div class="body">
             <div class="line table-header">
-                <div class="select">√</div>
+                <div class="select">-</div>
                 <div class="index">序号</div>
                 <div class="marker">类型</div>
                 <div class="filename">文件</div>

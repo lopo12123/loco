@@ -97,7 +97,8 @@ const toggleDropdown = (e: MouseEvent) => {
 /**
  * @description 回退文件
  */
-const doRollBack = (path: string) => {
+const doRollBack = (path: string, disabled: boolean = false) => {
+    if(disabled) return;
     console.log('回退: ', path)
 }
 </script>
@@ -159,8 +160,8 @@ const doRollBack = (path: string) => {
                     </span>
                 </div>
                 <div class="operate">
-                    <div class="rollback" title="rollback">
-                        <i class="iconfont icon-huitui" @click="doRollBack(item.path)"/>
+                    <div :class="['rollback', item.index === '?' ? 'disabled' : '']" title="rollback">
+                        <i class="iconfont icon-huitui" @click="doRollBack(item.path, item.index === '?')"/>
                     </div>
                 </div>
             </div>
@@ -314,6 +315,10 @@ const doRollBack = (path: string) => {
 
                 .rollback {
                     @extend %btn-base;
+                }
+
+                .disabled {
+                    cursor: not-allowed;
                 }
             }
         }

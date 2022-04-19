@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { onBeforeMount, ref } from "vue";
-import { LogResult } from "simple-git";
+import Dialog from "primevue/dialog";
+import type { LogResult, DefaultLogFields } from "simple-git";
 import { useIpcRenderer } from "../stores/store_ipc";
 import { useToastStore } from "../stores/store_toast";
 import { useGitStore } from "../stores/store_git";
@@ -19,7 +20,7 @@ const updateLogInfo = () => {
         if(res) {
             useGitStore().useLogInfo(logInfo)
             logInfoRef.value = logInfo
-            useToastStore().success('updated')
+            useToastStore().success('commit list updated')
         }
         else {
             useToastStore().error(logInfo)
@@ -35,10 +36,43 @@ const back = () => {
         name: 'GitView'
     })
 }
+
+// region reset
+const resetDialogVisible = ref(false)
+const rebaseTarget = ref<DefaultLogFields | null>(null)
+/**
+ * @description 硬重置到此提交
+ */
+const doReset = () => {
+    console.log('reset hard to: ', rebaseTarget.value)
+}
+// endregion
 </script>
 
 <template>
     <div class="commit-history">
+        <Dialog class="reset-dialog" header="版本回退" v-model:visible="resetDialogVisible">
+            <div class="reset-dialog-content">
+                <i class="alert-logo pi pi-exclamation-triangle"/>
+                <div class="information">
+                    <div class="info1">
+                        当前目录即将执行回退,目标版本的提交信息:
+                    </div>
+                    <div class="viewport">
+                        <i>{{ rebaseTarget.message }}</i>
+                    </div>
+                    <div>
+                        继续此操作将丢弃目标版本后的<b><u>全部更改</u></b>且<b><u>无法恢复</u></b>, 确认继续?
+                    </div>
+                </div>
+            </div>
+            <template #footer>
+                <div class="reset-dialog-footer">
+                    <div class="btn" @click="resetDialogVisible = false"><i>取消</i></div>
+                    <div class="btn" @click="doReset"><i>确认</i></div>
+                </div>
+            </template>
+        </Dialog>
         <div class="summary">
             <div class="summary-left">
                 <span>共 <span class="highlight">{{ logInfoRef?.total ?? '??' }}</span> 条提交记录</span>
@@ -60,7 +94,10 @@ const back = () => {
                 <div class="index">{{ index + 1 }}</div>
                 <div class="author-name" :title="`email: ${item.author_email}`">{{ item.author_name }}</div>
                 <div class="date">{{ new Date(item.date).toLocaleString('zh-cn', {hour12: false}) }}</div>
-                <div class="hash">{{ item.hash }}</div>
+                <div class="hash">
+                    <i class="iconfont icon-bazi" title="重置到此提交" @click="rebaseTarget = item; resetDialogVisible = true"/>
+                    {{ item.hash }}
+                </div>
                 <div class="message">{{ item.message }}</div>
             </div>
         </div>
@@ -142,12 +179,14 @@ const back = () => {
 
             .index {
                 @extend %ceil-base;
-                width: 50px;
+                width: 30px;
+                margin-right: 10px;
             }
 
             .author-name {
                 @extend %ceil-base;
-                width: 100px;
+                width: 60px;
+                margin-right: 10px;
                 cursor: pointer;
 
                 &:hover {
@@ -157,20 +196,30 @@ const back = () => {
 
             .date {
                 @extend %ceil-base;
-                width: 200px;
+                width: 140px;
+                margin-right: 10px;
             }
 
             .hash {
-                width: 70px;
+                width: 120px;
+                margin-right: 10px;
                 padding-right: 10px;
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 overflow: hidden;
+
+                i {
+                    cursor: pointer;
+
+                    &:hover {
+                        color: khaki;
+                    }
+                }
             }
 
             .message {
                 @extend %ceil-base;
-                width: calc(100% - 430px);
+                width: calc(100% - 400px);
             }
         }
 
@@ -180,6 +229,63 @@ const back = () => {
             top: 0;
             left: 0;
             background-color: #2f3241;
+        }
+    }
+}
+
+.reset-dialog {
+    box-sizing: content-box;
+
+    .reset-dialog-content {
+        position: relative;
+        width: 300px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .alert-logo {
+            width: 30px;
+            height: 30px;
+            font-size: 24px;
+            line-height: 30px;
+            text-align: center;
+        }
+
+        .information {
+            width: calc(100% - 50px);
+            font-size: 12px;
+            line-height: 16px;
+            font-family: cursive;
+
+            .viewport {
+                @include mixin.doScrollbar(#aaaaaa, 2px);
+                height: 32px;
+                max-height: 32px;
+                overflow: hidden auto;
+            }
+        }
+    }
+
+    .reset-dialog-footer {
+        position: relative;
+        width: 300px;
+        background-color: #2f3241;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        .btn {
+            position: relative;
+            height: 20px;
+            margin: 0 5px;
+            line-height: 20px;
+            cursor: pointer;
+
+            &:hover {
+                color: #9feaf9;
+                text-decoration: underline;
+            }
         }
     }
 }

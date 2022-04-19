@@ -44,7 +44,19 @@ const rebaseTarget = ref<DefaultLogFields | null>(null)
  * @description 硬重置到此提交
  */
 const doReset = () => {
-    console.log('reset hard to: ', rebaseTarget.value)
+    if(!rebaseTarget.value) {
+        useToastStore().warn('Lost the information of target to rollback.')
+        return
+    }
+    useIpcRenderer().send('gitReset', { hash: rebaseTarget.value.hash })
+    useIpcRenderer().once('gitResetReply', (e, [ res, msg ]) => {
+        if(res) {
+            useToastStore().success(msg)
+            resetDialogVisible.value = false
+            updateLogInfo()
+        }
+        else useToastStore().error(msg)
+    })
 }
 // endregion
 </script>
@@ -95,7 +107,8 @@ const doReset = () => {
                 <div class="author-name" :title="`email: ${item.author_email}`">{{ item.author_name }}</div>
                 <div class="date">{{ new Date(item.date).toLocaleString('zh-cn', {hour12: false}) }}</div>
                 <div class="hash">
-                    <i class="iconfont icon-bazi" title="重置到此提交" @click="rebaseTarget = item; resetDialogVisible = true"/>
+                    <i class="iconfont icon-bazi" title="重置到此提交"
+                       @click="rebaseTarget = item; resetDialogVisible = true"/>
                     {{ item.hash }}
                 </div>
                 <div class="message">{{ item.message }}</div>

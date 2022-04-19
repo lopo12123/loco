@@ -149,7 +149,7 @@ const doCommit = (type: 'show' | 'confirm') => {
 <template>
     <div class="git-view" v-if="baseDir && remoteInfo && statusInfoRef">
         <Dialog class="commit-dialog" header=" " v-model:visible="commitDialogVisible">
-            <div class="dl-content">
+            <div class="commit-dialog-content">
                 <textarea v-model="commitMessage" placeholder="提交信息 (可选)"/>
                 <div class="note">
                     <i>e.g. </i>
@@ -160,9 +160,9 @@ const doCommit = (type: 'show' | 'confirm') => {
                 </div>
             </div>
             <template #footer>
-                <div class="dl-footer">
-                    <div class="btn" @click="commitDialogVisible = false"><i>cancel</i></div>
-                    <div class="btn" @click="doCommit('confirm')"><i>commit</i></div>
+                <div class="commit-dialog-footer">
+                    <div class="btn" @click="commitDialogVisible = false"><i>取消</i></div>
+                    <div class="btn" @click="doCommit('confirm')"><i>确认</i></div>
                 </div>
             </template>
         </Dialog>
@@ -420,7 +420,7 @@ const doCommit = (type: 'show' | 'confirm') => {
 .commit-dialog {
     box-sizing: content-box;
 
-    .dl-content {
+    .commit-dialog-content {
         width: 260px;
         height: 80px;
         background-color: #2f3241;
@@ -457,7 +457,7 @@ const doCommit = (type: 'show' | 'confirm') => {
         }
     }
 
-    .dl-footer {
+    .commit-dialog-footer {
         position: relative;
         width: 260px;
         background-color: #2f3241;

@@ -119,4 +119,21 @@ img {
     }
 }
 
+.hover-underline {
+    &::after {
+        position: absolute;
+        content: "";
+        height: 1px;
+        width: 0;
+        bottom: 0;
+        left: 50%;
+        background-color: #9feaf9;
+        transition: all 0.2s linear;
+    }
+
+    &:hover::after {
+        width: 100%;
+        left: 0;
+    }
+}
 // endregion

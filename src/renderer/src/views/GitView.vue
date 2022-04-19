@@ -134,6 +134,8 @@ const doCommit = (type: 'show' | 'confirm') => {
         useIpcRenderer().once('gitCommitReply', (e, [ res, commitInfo ]) => {
             if(res) {
                 useToastStore().success('success')
+                commitDialogVisible.value = false
+                updateGitInfo()
             }
             else {
                 useToastStore().error(commitInfo)
@@ -356,6 +358,7 @@ const doCommit = (type: 'show' | 'confirm') => {
                         position: relative;
                         width: 10px;
                         height: 10px;
+                        cursor: pointer;
                     }
                 }
             }

@@ -1,4 +1,4 @@
-import simpleGit, { LogResult, SimpleGit, StatusResult } from "simple-git";
+import simpleGit, { CommitResult, LogResult, SimpleGit, StatusResult } from "simple-git";
 import { join as joinPath, resolve as resolvePath } from "path";
 
 class Git {
@@ -20,7 +20,26 @@ class Git {
         })
     }
 
-    cmd_log() {
+    cmd_commit(files: string[], msg: string): Promise<CommitResult> {
+        if(!msg) msg = 'system: This message is automatically added when the user does not enter commit information.'
+
+        return new Promise<CommitResult>((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else {
+                this.#git.add(files, (err_add) => {
+                    if(err_add) reject(err_add)
+                    else {
+                        this.#git!.commit(msg, files, (err_commit, data) => {
+                            if(err_commit) reject(err_commit)
+                            else resolve(data)
+                        })
+                    }
+                })
+            }
+        })
+    }
+
+    cmd_log(): Promise<LogResult> {
         return new Promise<LogResult>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
             else this.#git.log([], (err, data) => {
@@ -68,6 +87,20 @@ class Git {
 
 const _ = new Git()
 export const useGit = () => _
+
+_.init('D:\\GitProjects\\pool\\noGit')
+    .then((self) => {
+        console.time('cmt')
+        return self.cmd_commit(['a.txt'], 'msg1')
+    })
+    .then((res) => {
+        console.log(res)
+        console.timeEnd('cmt')
+    })
+    .catch((err) => {
+        console.log(err)
+        console.timeEnd('cmt')
+    })
 
 // test: remote
 // console.time('remote')

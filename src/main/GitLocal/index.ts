@@ -88,7 +88,7 @@ class Git {
         return new Promise<string>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
             else this.#git.reset([ '--hard', hash ], (err, stdout) => {
-                err ? reject(err) : resolve(stdout)
+                err ? reject(err) : resolve(stdout.replace(/[\n]/g, ''))
             })
         })
     }

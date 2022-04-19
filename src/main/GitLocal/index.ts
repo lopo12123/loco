@@ -83,24 +83,45 @@ class Git {
             }
         })
     }
+
+    cmd_reset(hash: string): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else this.#git.reset([ '--hard', hash ], (err, stdout) => {
+                err ? reject(err) : resolve(stdout)
+            })
+        })
+    }
 }
 
 const _ = new Git()
 export const useGit = () => _
 
-_.base('D:\\GitProjects\\pool\\noGit')
-    .then((self) => {
-        console.time('cmt')
-        return self.cmd_commit(['a.txt'], 'msg1')
-    })
-    .then((res) => {
-        console.log(res)
-        console.timeEnd('cmt')
-    })
-    .catch((err) => {
-        console.log(err)
-        console.timeEnd('cmt')
-    })
+// _.base('D:\\GitProjects\\pool\\noGit')
+//     .then((self) => {
+//         console.time('cmt')
+//         return self.cmd_commit([ 'a.txt' ], 'msg1')
+//     })
+//     .then((res) => {
+//         console.log(res)
+//         console.timeEnd('cmt')
+//     })
+//     .catch((err) => {
+//         console.log(err)
+//         console.timeEnd('cmt')
+//     })
+
+// test: reset
+// _.base('D:\\GitProjects\\pool\\noGit')
+//     .then((self) => {
+//         return self.cmd_reset('5af911b')
+//     })
+//     .then((res) => {
+//         console.log(res)
+//     })
+//     .catch((err) => {
+//         console.log(err)
+//     })
 
 // test: remote
 // console.time('remote')

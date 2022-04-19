@@ -65,14 +65,43 @@ img {
 
     .p-menuitem-link {
         padding: 5px 10px;
+
         .p-menuitem-icon {
             color: $font-color-highlight;
         }
+
         .p-menuitem-text {
             color: $font-color-default;
         }
     }
 }
+
+.p-dialog {
+    padding: 5px 10px;
+    border: solid 1px #9feaf9;
+    background-color: #2f3241;
+
+    .p-dialog-header {
+        padding: 0;
+        background-color: #2f3241;
+        color: $font-color-default;
+        user-select: none;
+        cursor: move;
+    }
+
+    .p-dialog-content {
+        padding: 0;
+        background-color: #2f3241;
+        color: $font-color-default;
+    }
+
+    .p-dialog-footer {
+        padding: 0;
+        background-color: #2f3241;
+        color: $font-color-default;
+    }
+}
+
 // endregion
 
 // region custom

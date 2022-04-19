@@ -118,7 +118,7 @@ const doCommit = () => {
     <div class="git-view" v-if="baseDir && remoteInfo && statusInfoRef">
         <div class="head">
             <div class="line path-block">
-                <span class="h-key">git路径(root) </span>
+                <span class="h-key">根路径(root) </span>
                 <span class="root-path" @click="openInExplorer('base', '')">{{ baseDir }}</span>
                 <div class="op-btn">
                     <div class="btn" title="获取最新状态"

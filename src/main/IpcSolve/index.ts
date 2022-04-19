@@ -62,7 +62,21 @@ const setIpc = (winRef: BrowserWindow | null) => {
     })
     // endregion
 
-    // region [git<Command>] <Command>= 'Detect' | 'Init' | 'Log' | 'Status'
+    // region [git<Command>]
+    ipcMain.on('gitBase', (e, { filePath }) => {
+        useGit().base(filePath)
+            .then((self) => {
+                return Promise.all([ self.cmd_remote(), self.cmd_status() ])
+            })
+            .then(([ remoteInfo, statusInfo ]) => {
+                e.reply('gitBaseReply', shakeFn([ true, { remoteInfo, statusInfo } ]))
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitBaseReply', shakeFn([ false, err ]))
+            })
+    })
     ipcMain.on('gitCommit', (e, { files, message }) => {
         useGit().cmd_commit(files, message)
             .then((res) => {
@@ -79,20 +93,6 @@ const setIpc = (winRef: BrowserWindow | null) => {
             if(err) e.reply('gitDetectReply', [ false, err.message ])
             else e.reply('gitDetectReply', [ true, stdout.replace(/[\n]/g, '') ])
         })
-    })
-    ipcMain.on('gitInit', (e, { filePath }) => {
-        useGit().init(filePath)
-            .then((self) => {
-                return Promise.all([ self.cmd_remote(), self.cmd_status() ])
-            })
-            .then(([ remoteInfo, statusInfo ]) => {
-                e.reply('gitInitReply', shakeFn([ true, { remoteInfo, statusInfo } ]))
-            })
-            .catch((err) => {
-                if(err instanceof Error) err = err.message
-                else err = JSON.stringify(err)
-                e.reply('gitInitReply', shakeFn([ false, err ]))
-            })
     })
     ipcMain.on('gitLog', (e) => {
         useGit().cmd_log()

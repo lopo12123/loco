@@ -4,7 +4,7 @@ import { join as joinPath, resolve as resolvePath } from "path";
 class Git {
     #git: SimpleGit | null = null
 
-    init(path: string) {
+    base(path: string) {
         path = resolvePath(path)
         if(path.endsWith('.git')) path = joinPath(path, '..')
         return new Promise<Git>((resolve, reject) => {
@@ -88,7 +88,7 @@ class Git {
 const _ = new Git()
 export const useGit = () => _
 
-_.init('D:\\GitProjects\\pool\\noGit')
+_.base('D:\\GitProjects\\pool\\noGit')
     .then((self) => {
         console.time('cmt')
         return self.cmd_commit(['a.txt'], 'msg1')
@@ -104,7 +104,7 @@ _.init('D:\\GitProjects\\pool\\noGit')
 
 // test: remote
 // console.time('remote')
-// _.init('.')
+// _.base('.')
 //     .then((self) => {
 //         return self.cmd_remote()
 //     })
@@ -120,7 +120,7 @@ _.init('D:\\GitProjects\\pool\\noGit')
 
 // test: log
 // console.time('log')
-// _.init('D:\\GitProjects\\git-loco\\.git')
+// _.base('D:\\GitProjects\\git-loco\\.git')
 //     .then((self) => {
 //         return self.cmd_log()
 //     })
@@ -133,7 +133,7 @@ _.init('D:\\GitProjects\\pool\\noGit')
 //     })
 
 // test: status
-// _.init("D:\\GitProjects\\loco\\.git")
+// _.base("D:\\GitProjects\\loco\\.git")
 //     .then((self) => {
 //         return self.cmd_status()
 //     })

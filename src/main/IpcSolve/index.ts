@@ -63,6 +63,17 @@ const setIpc = (winRef: BrowserWindow | null) => {
     // endregion
 
     // region [git<Command>] <Command>= 'Detect' | 'Init' | 'Log' | 'Status'
+    ipcMain.on('gitCommit', (e, { files, message }) => {
+        useGit().cmd_commit(files, message)
+            .then((res) => {
+                e.reply('gitCommitReply', shakeFn([ true, res ]))
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitCommitReply', shakeFn([ false, err ]))
+            })
+    })
     ipcMain.on('gitDetect', (e) => {
         exec('git --version', (err, stdout) => {
             if(err) e.reply('gitDetectReply', [ false, err.message ])

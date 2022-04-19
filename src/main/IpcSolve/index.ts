@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import { exec } from "child_process";
-import { resolve as resolvePath } from "path";
+import { join as joinPath, resolve as resolvePath } from "path";
 import { useGit } from "../GitLocal";
 
 // region custom fn
@@ -86,6 +86,23 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 if(err instanceof Error) err = err.message
                 else err = JSON.stringify(err)
                 e.reply('gitCommitReply', shakeFn([ false, err ]))
+            })
+    })
+    // ipcMain.on('gitConfig', (e, args) => {
+    //
+    // })
+    ipcMain.on('gitConfigEdit', (e) => {
+        useGit().cmd_toplevel()
+            .then((rootDir) => {
+                exec(`notepad.exe ${joinPath(rootDir, './.git/config')}`, (err) => {
+                    if(err) e.reply('gitConfigEditReply', [false, err.message])
+                    else e.reply('gitConfigEditReply', [true, 'success'])
+                })
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitLogReply', shakeFn([ false, err ]))
             })
     })
     ipcMain.on('gitDetect', (e) => {

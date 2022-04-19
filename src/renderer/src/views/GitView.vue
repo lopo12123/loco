@@ -208,8 +208,7 @@ const doCommit = (type: 'show' | 'confirm') => {
                 <div class="index">序号</div>
                 <div class="marker">类型</div>
                 <div class="filename">文件</div>
-                <div class="commit-btn"
-                     title="commit selected files" @click="doCommit('show')">
+                <div class="commit-btn" title="commit selected files" @click="doCommit('show')">
                     <i class="iconfont icon-check"/>commit
                 </div>
             </div>
@@ -408,6 +407,10 @@ const doCommit = (type: 'show' | 'confirm') => {
                 &:hover::after {
                     width: 100%;
                     left: 0;
+                }
+
+                i {
+                    font-size: 12px;
                 }
             }
         }

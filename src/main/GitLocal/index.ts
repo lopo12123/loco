@@ -39,19 +39,27 @@ class Git {
         })
     }
 
+    // todo
+    cmd_config_overview() {
+        return new Promise((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else {
+                this.#git
+                    .getConfig('user.email', 'local')
+                    .then((res) => {
+                        resolve(res)
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    })
+            }
+        })
+    }
+
     cmd_log(): Promise<LogResult> {
         return new Promise<LogResult>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
             else this.#git.log([], (err, data) => {
-                err ? reject(err) : resolve(data)
-            })
-        })
-    }
-
-    cmd_status(): Promise<StatusResult> {
-        return new Promise<StatusResult>((resolve, reject) => {
-            if(!this.#git) reject('Git has not been initialized.')
-            else this.#git.status((err, data) => {
                 err ? reject(err) : resolve(data)
             })
         })
@@ -92,23 +100,38 @@ class Git {
             })
         })
     }
+
+    cmd_status(): Promise<StatusResult> {
+        return new Promise<StatusResult>((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else this.#git.status((err, data) => {
+                err ? reject(err) : resolve(data)
+            })
+        })
+    }
+
+    cmd_toplevel(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else this.#git.revparse(['--show-toplevel'], (err, data) => {
+                err ? reject(err) : resolve(data.replace(/[\n]/g, ''))
+            })
+        })
+    }
 }
 
 const _ = new Git()
 export const useGit = () => _
 
-// _.base('D:\\GitProjects\\pool\\noGit')
+// _.base('D:\\GitProjects\\pool\\noGit\\123')
 //     .then((self) => {
-//         console.time('cmt')
-//         return self.cmd_commit([ 'a.txt' ], 'msg1')
+//         return self.cmd_toplevel()
 //     })
 //     .then((res) => {
 //         console.log(res)
-//         console.timeEnd('cmt')
 //     })
 //     .catch((err) => {
 //         console.log(err)
-//         console.timeEnd('cmt')
 //     })
 
 // test: reset

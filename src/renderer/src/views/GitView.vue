@@ -127,14 +127,19 @@ const doCommit = (type: 'show' | 'confirm') => {
         }
     }
     else if(type === 'confirm') {
-        // send ipc to backend
-        useIpcRenderer().send('gitCommit', JSON.parse(JSON.stringify({ files: commitFiles.value, message: commitMessage.value })))
-        useIpcRenderer().once('gitCommitReply', (e, [res, commitInfo]) => {
-            console.log(e, res, commitInfo)
+        useIpcRenderer().send('gitCommit', JSON.parse(JSON.stringify({
+            files: commitFiles.value,
+            message: commitMessage.value
+        })))
+        useIpcRenderer().once('gitCommitReply', (e, [ res, commitInfo ]) => {
+            if(res) {
+                console.log(res, commitInfo)
+                useToastStore().success('commit success')
+            }
+            else {
+                useToastStore().error(commitInfo)
+            }
         })
-
-        console.log(commitFiles.value, commitMessage.value)
-        useToastStore().info('todo: send ipc')
     }
 }
 // endregion

@@ -21,7 +21,7 @@ class Git {
     }
 
     cmd_commit(files: string[], msg: string): Promise<CommitResult> {
-        if(!msg) msg = 'system: This message is automatically added when the user does not enter commit information.'
+        if(!msg) msg = 'system: No commit message'
 
         return new Promise<CommitResult>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')

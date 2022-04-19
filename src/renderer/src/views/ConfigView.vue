@@ -1,8 +1,17 @@
 <script lang="ts" setup>
 
 import { useRouter } from "vue-router";
+import { useIpcRenderer } from "../stores/store_ipc";
+import { useToastStore } from "../stores/store_toast";
 
 const router = useRouter()
+
+const openInNotepad = () => {
+    useIpcRenderer().send('gitConfigEdit')
+    useIpcRenderer().once('gitConfigEditReply', (e, [ res, msg ]) => {
+        if(!res) useToastStore().error(msg)
+    })
+}
 
 /**
  * @description 返回 git-view 页面
@@ -18,7 +27,7 @@ const back = () => {
     <div class="config-view">
         <div class="banner">
             <div class="banner-left">
-                <span class="hover-underline">在文件中查看/编辑</span>
+                <span class="hover-underline" @click="openInNotepad">在文件中查看/编辑</span>
                 <i class="iconfont icon-shuaxin" title="获取最新状态"/>
             </div>
             <div class="banner-right">
@@ -68,6 +77,7 @@ const back = () => {
                 cursor: pointer;
                 display: inline-block;
             }
+
             i {
                 @extend %btn-base;
                 margin-left: 5px;

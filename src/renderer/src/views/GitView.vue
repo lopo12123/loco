@@ -133,8 +133,7 @@ const doCommit = (type: 'show' | 'confirm') => {
         })))
         useIpcRenderer().once('gitCommitReply', (e, [ res, commitInfo ]) => {
             if(res) {
-                console.log(res, commitInfo)
-                useToastStore().success('commit success')
+                useToastStore().success('success')
             }
             else {
                 useToastStore().error(commitInfo)

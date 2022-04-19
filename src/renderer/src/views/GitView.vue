@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import Dialog from "primevue/dialog";
 import GitMarker from "../components/GitView/GitMarker.vue";
 import Menu from "primevue/menu";
 import { useGitStore } from "../stores/store_git";
@@ -96,26 +97,70 @@ const toggleDropdown = (e: MouseEvent) => {
     menuRef.value?.toggle(e)
 }
 
-/**
- * @description 执行 git commit
- */
-const doCommit = () => {
-    const filesToCommit: string[] = []
-    for(let i = 0; i < selectList.value.length; i ++) {
-        if(selectList.value[i]) {
-            filesToCommit.push(statusInfoRef.value.files[i].path)
+// region 执行 git commit
+const commitExamples = [
+    'feat: add a new feature of xxx',
+    'fix: fix the bug of xxx',
+    'docs: add documentation for xxx.',
+    'refactor: refactor xxx',
+    'style: modified the style of xxx',
+    'test: add test of xxx',
+    'chore: change build process or auxiliary tool'
+]
+const exampleIndex = ref(0)
+const commitFiles = ref<string[]>([])
+const commitMessage = ref('')
+const commitDialogVisible = ref(false)
+
+const doCommit = (type: 'show' | 'confirm') => {
+    if(type === 'show') {
+        const filesToCommit: string[] = []
+        for (let i = 0; i < selectList.value.length; i++) {
+            if(selectList.value[i]) {
+                filesToCommit.push(statusInfoRef.value.files[i].path)
+            }
+        }
+        if(filesToCommit.length === 0) useToastStore().warn('select at least one file to commit.')
+        else {
+            commitFiles.value = filesToCommit
+            commitDialogVisible.value = true
         }
     }
-    if(filesToCommit.length === 0) useToastStore().warn('select at least one file to commit.')
-    else {
+    else if(type === 'confirm') {
         // send ipc to backend
+        useIpcRenderer().send('gitCommit', JSON.parse(JSON.stringify({ files: commitFiles.value, message: commitMessage.value })))
+        useIpcRenderer().once('gitCommitReply', (e, [res, commitInfo]) => {
+            console.log(e, res, commitInfo)
+        })
+
+        console.log(commitFiles.value, commitMessage.value)
         useToastStore().info('todo: send ipc')
     }
 }
+// endregion
 </script>
 
 <template>
     <div class="git-view" v-if="baseDir && remoteInfo && statusInfoRef">
+        <Dialog class="commit-dialog" header=" " v-model:visible="commitDialogVisible">
+            <div class="dl-content">
+                <textarea v-model="commitMessage" placeholder="提交信息 (可选)"/>
+                <div class="note">
+                    <i>e.g. </i>
+                    <span title="click to see another example"
+                          @click="exampleIndex = (exampleIndex + 1) % 7">
+                        {{ commitExamples[exampleIndex] }}
+                    </span>
+                </div>
+            </div>
+            <template #footer>
+                <div class="dl-footer">
+                    <div class="btn" @click="commitDialogVisible = false"><i>cancel</i></div>
+                    <div class="btn" @click="doCommit('confirm')"><i>commit</i></div>
+                </div>
+            </template>
+        </Dialog>
+
         <div class="head">
             <div class="line path-block">
                 <span class="h-key">根路径(root) </span>
@@ -157,7 +202,8 @@ const doCommit = () => {
                 <div class="index">序号</div>
                 <div class="marker">类型</div>
                 <div class="filename">文件</div>
-                <div class="commit-btn" title="commit selected files" @click="doCommit">
+                <div class="commit-btn"
+                     title="commit selected files" @click="doCommit('show')">
                     <i class="iconfont icon-check"/>commit
                 </div>
             </div>
@@ -356,6 +402,69 @@ const doCommit = () => {
                     width: 100%;
                     left: 0;
                 }
+            }
+        }
+    }
+}
+
+.commit-dialog {
+    box-sizing: content-box;
+
+    .dl-content {
+        width: 260px;
+        height: 80px;
+        background-color: #2f3241;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        overflow: hidden;
+
+        textarea {
+            width: 100%;
+            height: 60px;
+            padding: 5px;
+            background-color: #1b1e2d;
+            outline: none;
+            color: #9feaf9;
+            resize: none;
+        }
+
+        .note {
+            width: 100%;
+            height: 20px;
+            color: #86a5b1cc;
+            font-size: 12px;
+            user-select: none;
+
+            span {
+                cursor: pointer;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+
+    .dl-footer {
+        position: relative;
+        width: 260px;
+        background-color: #2f3241;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        .btn {
+            position: relative;
+            height: 20px;
+            margin: 0 5px;
+            line-height: 20px;
+            cursor: pointer;
+
+            &:hover {
+                color: #9feaf9;
+                text-decoration: underline;
             }
         }
     }

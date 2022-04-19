@@ -46,7 +46,7 @@ const updateGitInfo = () => {
             useGitStore().useStatusInfo(statusInfo)
             statusInfoRef.value = statusInfo
             selectList.value = new Array(statusInfo.files.length).fill(false)
-            useToastStore().success('updated')
+            useToastStore().success('status updated')
         }
         else {
             useToastStore().error(statusInfo)
@@ -133,7 +133,7 @@ const doCommit = (type: 'show' | 'confirm') => {
         })))
         useIpcRenderer().once('gitCommitReply', (e, [ res, commitInfo ]) => {
             if(res) {
-                useToastStore().success('success')
+                useToastStore().success('successful commit')
                 commitDialogVisible.value = false
                 updateGitInfo()
             }

@@ -87,6 +87,11 @@ img {
         color: $font-color-default;
         user-select: none;
         cursor: move;
+
+        .p-dialog-title {
+            font-size: 16px;
+            font-family: cursive;
+        }
     }
 
     .p-dialog-content {
@@ -99,6 +104,7 @@ img {
         padding: 0;
         background-color: #2f3241;
         color: $font-color-default;
+        font-family: cursive;
     }
 }
 

@@ -105,6 +105,17 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 e.reply('gitLogReply', shakeFn([ false, err ]))
             })
     })
+    ipcMain.on('gitReset', (e, { hash }) => {
+        useGit().cmd_reset(hash)
+            .then((res) => {
+                e.reply('gitResetReply', [true, res])
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitResetReply', shakeFn([ false, err ]))
+            })
+    })
     ipcMain.on('gitStatus', (e) => {
         useGit().cmd_status()
             .then((res) => {

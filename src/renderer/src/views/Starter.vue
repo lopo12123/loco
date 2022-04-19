@@ -31,8 +31,8 @@ const solveGitPath = (path: string) => {
 
     infoConfig.value = InfoPair.block
     useToastStore().info('parsing')
-    useIpcRenderer().send('gitInit', { filePath: path })
-    useIpcRenderer().once('gitInitReply', (e, [ res, groupedInfo ]) => {
+    useIpcRenderer().send('gitBase', { filePath: path })
+    useIpcRenderer().once('gitBaseReply', (e, [ res, groupedInfo ]) => {
         infoConfig.value = InfoPair.free
         if(res) {
             const { remoteInfo, statusInfo } = groupedInfo

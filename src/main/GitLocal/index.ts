@@ -77,13 +77,37 @@ class Git {
                             return Promise.resolve('')
                         }
                         else {
-                            remoteName = res.replace(/[\n ]/g, '')
+                            remoteName = res.split('\n')[0] ?? ''
                             return this.#git!.remote([ 'get-url', remoteName ])
                         }
                     })
                     .then((remoteUrl) => {
                         if(!remoteUrl) resolve([ remoteName, '' ])
                         else resolve([ remoteName, remoteUrl.replace(/[\n ]/g, '') ])
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    })
+            }
+        })
+    }
+
+    cmd_remote_set(name: string, url: string) {
+        return new Promise((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else {
+                this.#git
+                    .remote([])
+                    .then((remoteNames) => {
+                        if(!remoteNames || !remoteNames.includes(name)) {
+                            return this.#git!.remote(['add', name, url])
+                        }
+                        else {
+                            return this.#git!.remote(['set-url', name, url])
+                        }
+                    })
+                    .then((res) => {
+                        resolve(res)
                     })
                     .catch((err) => {
                         reject(err)
@@ -122,6 +146,17 @@ class Git {
 
 const _ = new Git()
 export const useGit = () => _
+
+// _.base('D:\\GitProjects\\pool\\jest')
+//     .then((self) => {
+//         return self.cmd_remote_set('new1', 'git@newurl.git')
+//     })
+//     .then((res) => {
+//         console.log(res)
+//     })
+//     .catch((err) => {
+//         console.log(err)
+//     })
 
 // _.base('D:\\GitProjects\\pool\\noGit\\123')
 //     .then((self) => {

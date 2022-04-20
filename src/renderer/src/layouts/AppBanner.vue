@@ -14,10 +14,10 @@ const ifShowHomeBtn = computed(() => {
     return (route.name ?? '') as string
 })
 
-type BannerOperates = 'home' | 'min' | 'refresh' | 'max' | 'close'
+type BannerOperates = 'reselect' | 'min' | 'refresh' | 'max' | 'close'
 const doBannerOperate = (op: BannerOperates) => {
     switch(op) {
-        case 'home':
+        case 'reselect':
             useGitStore().clear()
             router.push({ name: 'Starter' })
             break
@@ -43,23 +43,23 @@ const doBannerOperate = (op: BannerOperates) => {
 
         <div class="btn-group">
             <div v-if="ifShowHomeBtn !== 'Starter'"
-                 class="btn hover-spin"
-                 @click="doBannerOperate('home')">
-                <i class="iconfont icon-home"/>
+                 class="btn hover-spin" title="重新选择git仓库"
+                 @click="doBannerOperate('reselect')">
+                <i class="iconfont icon-zhongxuan"/>
             </div>
-            <div class="btn hover-spin"
+            <div class="btn hover-spin" title="最小化"
                  @click="doBannerOperate('min')">
                 <i class="iconfont icon-zuixiaohua"/>
             </div>
-            <div class="btn hover-spin"
+            <div class="btn hover-spin" title="刷新"
                  @click="doBannerOperate('refresh')">
                 <i class="iconfont icon-shuaxin"/>
             </div>
-            <div class="btn hover-spin"
+            <div class="btn hover-spin" title="最大化"
                  @click="doBannerOperate('max')">
                 <i class="iconfont icon-zuidahua"/>
             </div>
-            <div class="btn hover-spin"
+            <div class="btn hover-spin" title="关闭"
                  @click="doBannerOperate('close')">
                 <i class="iconfont icon-guanbi"></i>
             </div>

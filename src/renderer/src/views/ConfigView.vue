@@ -5,18 +5,22 @@ import { useIpcRenderer } from "../stores/store_ipc";
 import { useToastStore } from "../stores/store_toast";
 import { onBeforeMount, ref } from "vue";
 import { useGitStore } from "../stores/store_git";
+import ClickToEdit from "../components/Misc/ClickToEdit.vue";
 
 const router = useRouter()
 const remoteInfo = ref<[ string, string ]>(useGitStore().useRemoteInfo())
 
 onBeforeMount(() => {
-    if(remoteInfo.value === null) {
-        useToastStore().warn('No remote info available.')
-        router.push({
-            name: 'Starter'
-        })
-        remoteInfo.value = [ '', '' ]
-    }
+    // if(remoteInfo.value === null) {
+    //     useToastStore().warn('No remote info available.')
+    //     router.push({
+    //         name: 'Starter'
+    //     })
+    //     remoteInfo.value = [ '', '' ]
+    // }
+
+    if(remoteInfo.value === null) remoteInfo.value = [ '', '' ]
+    if(userInfo.value === null) userInfo.value = { name: '', email: '' }
 })
 
 /**
@@ -36,7 +40,7 @@ const updateAllConfig = () => {
     useToastStore().info('暂不支持, 请手动逐条刷新')
 }
 
-// region git remote
+// region remote
 const remoteUrlToSet = ref('')
 const remoteOperateType = ref<'add' | 'set-url'>('add')
 const remoteDialogVisible = ref(false)
@@ -47,7 +51,7 @@ const updateRemote = (type: 'get' | 'set') => {
             if(res) {
                 remoteInfo.value = msg
                 useGitStore().useRemoteInfo(msg)
-                useToastStore().success('remote config updated')
+                useToastStore().success('reread remote config')
             }
             else {
                 useToastStore().error(msg)
@@ -80,6 +84,41 @@ const updateRemote = (type: 'get' | 'set') => {
 }
 // endregion
 
+// region user
+const userInfo = ref<{ name: string, email: string } | null>(useGitStore().useUserInfo())
+const updateUser = (type: 'get' | 'name' | 'email', val: string) => {
+    if(type === 'get') {
+        useIpcRenderer().send('gitUserGet')
+        useIpcRenderer().once('gitUserGetReply', (e, [ res, info ]) => {
+            if(res) {
+                userInfo.value = info
+                useGitStore().useUserInfo(info)
+                useToastStore().success('reread user config')
+            }
+            else {
+                useToastStore().error(info)
+            }
+        })
+    }
+    else {
+        useIpcRenderer().send('gitUserSet', { key: type, val: val })
+        useIpcRenderer().once('gitUserSetReply', (e, [ res, msg ]) => {
+            if(res) {
+                userInfo.value = {
+                    ...userInfo.value,
+                    [type]: val
+                }
+                useGitStore().useUserInfo(userInfo.value)
+                useToastStore().success(`user.${ type } updated`)
+            }
+            else {
+                useToastStore().error(msg)
+            }
+        })
+    }
+}
+// endregion
+
 /**
  * @description 返回 git-view 页面
  */
@@ -94,8 +133,9 @@ const back = () => {
     <div class="config-view">
         <Dialog class="remote-dialog" header="定义远程" v-model:visible="remoteDialogVisible">
             <div class="remote-dialog-content">
-                <div class="remote-name">名称: <span class="remote-name-val">{{ remoteInfo[0] }}</span></div>
-                <div class="remote-url">url:</div>
+                <div class="remote-name"><span style="color: #9feaf9">名称: </span><span
+                    class="remote-name-val">{{ remoteInfo[0] }}</span></div>
+                <div class="remote-url" style="color: #9feaf9">url:</div>
                 <input class="remote-url-ipt" v-model="remoteUrlToSet"
                        type="text" placeholder="请输入远程url" spellcheck="false">
             </div>
@@ -120,7 +160,7 @@ const back = () => {
         <div class="overview">
             <div class="config-item">
                 <div class="line1">
-                    <span class="key">远程(remote)</span>
+                    <span style="color: khaki;">远程(remote)</span>
                     <i class="iconfont icon-shuaxin btn-like"
                        title="重新获取远程信息" @click="updateRemote('get')"/>
                 </div>
@@ -136,6 +176,20 @@ const back = () => {
                     </span>
                 </div>
             </div>
+            <div class="config-item">
+                <div class="line1">
+                    <span style="color: khaki;">用户(user)</span>
+                    <i class="iconfont icon-shuaxin btn-like"
+                       title="重新获取用户信息" @click="updateUser('get', '')"/>
+                </div>
+                <div class="line2">
+                    <span style="color: #9feaf9">姓名 </span>
+                    <ClickToEdit style="width: 200px" :text="userInfo.name" @do-edit="updateUser('name', $event)"/>
+                    <span style="color: #9feaf9">邮箱 </span>
+                    <ClickToEdit style="width: 200px" :text="userInfo.email"
+                                 @do-edit="updateUser('email', $event)"/>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -149,21 +203,6 @@ const back = () => {
     height: 100%;
     font-family: cursive;
     user-select: none;
-
-    .btn-like {
-        position: relative;
-        width: 30px;
-        height: 30px;
-        border-radius: 5px;
-        text-align: center;
-        line-height: 30px;
-        cursor: pointer;
-        display: inline-block;
-
-        &:hover {
-            background-color: #cccccc1a;
-        }
-    }
 
     .banner {
         position: relative;
@@ -205,13 +244,6 @@ const back = () => {
                 width: 100%;
                 height: 30px;
                 overflow: auto hidden;
-            }
-
-            .key {
-                position: sticky;
-                left: 0;
-                color: khaki;
-                background-color: #2f3241;
             }
 
             .editable {

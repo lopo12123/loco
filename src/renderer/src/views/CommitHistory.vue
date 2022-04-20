@@ -169,7 +169,7 @@ const doReset = () => {
     }
 
     .detail {
-        @include mixin.doScrollbar(#aaaaaa, 4px);
+        @include mixin.doScrollbar(#777777, 4px);
         position: relative;
         width: 100%;
         height: calc(100% - 30px);
@@ -184,7 +184,7 @@ const doReset = () => {
             justify-content: space-between;
 
             %ceil-base {
-                @include mixin.doScrollbar(#aaaaaa, 2px);
+                @include mixin.doScrollbar(#777777, 2px);
                 position: relative;
                 overflow: auto hidden;
                 white-space: nowrap;
@@ -272,7 +272,7 @@ const doReset = () => {
             font-family: cursive;
 
             .viewport {
-                @include mixin.doScrollbar(#aaaaaa, 2px);
+                @include mixin.doScrollbar(#777777, 2px);
                 height: 32px;
                 max-height: 32px;
                 overflow: hidden auto;

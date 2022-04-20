@@ -1,4 +1,4 @@
-import simpleGit, { CommitResult, LogResult, SimpleGit, StatusResult } from "simple-git";
+import simpleGit, { CommitResult, LogResult, PullResult, PushResult, SimpleGit, StatusResult } from "simple-git";
 import { join as joinPath, resolve as resolvePath } from "path";
 import { readFileSync, writeFileSync } from "fs";
 
@@ -79,6 +79,24 @@ class Git {
             if(!this.#git) reject('Git has not been initialized.')
             else this.#git.log([], (err, data) => {
                 err ? reject(err) : resolve(data)
+            })
+        })
+    }
+
+    cmd_pull(): Promise<PullResult> {
+        return new Promise<PullResult>((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else this.#git.pull((err, res) => {
+                err ? reject(err) : resolve(res)
+            })
+        })
+    }
+
+    cmd_push(): Promise<PushResult> {
+        return new Promise<PushResult>((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else this.#git.push((err, res) => {
+                err ? reject(err) : resolve(res)
             })
         })
     }
@@ -202,16 +220,12 @@ class Git {
 const _ = new Git()
 export const useGit = () => _
 
-// _.base('D:\\GitProjects\\pool\\jest')
+// _.base('D:\\GitProjects\\pool\\loco-test')
 //     .then((self) => {
-//         return self.cmd_ignore()
+//         return self.cmd_push()
 //     })
 //     .then((res) => {
 //         console.log(res)
-//         return _.cmd_ignore_set(res.split('\n').slice(3).join('\n'))
-//     })
-//     .then(() => {
-//         console.log('change success')
 //     })
 //     .catch((err) => {
 //         console.log(err)

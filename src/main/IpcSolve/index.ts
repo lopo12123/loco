@@ -122,7 +122,7 @@ const setIpc = (winRef: BrowserWindow | null) => {
     ipcMain.on('gitRemoteGet', (e) => {
         useGit().cmd_remote()
             .then((res) => {
-                e.reply('gitRemoteGetReply', [true, res])
+                e.reply('gitRemoteGetReply', [ true, res ])
             })
             .catch((err) => {
                 if(err instanceof Error) err = err.message
@@ -133,7 +133,7 @@ const setIpc = (winRef: BrowserWindow | null) => {
     ipcMain.on('gitRemoteSet', (e, { name, url }) => {
         useGit().cmd_remote_set(name, url)
             .then(() => {
-                e.reply('gitRemoteSetReply', [true, 'success'])
+                e.reply('gitRemoteSetReply', [ true, 'success' ])
             })
             .catch((err) => {
                 if(err instanceof Error) err = err.message
@@ -161,6 +161,28 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 if(err instanceof Error) err = err.message
                 else err = JSON.stringify(err)
                 e.reply('gitStatusReply', shakeFn([ false, err ]))
+            })
+    })
+    ipcMain.on('gitUserGet', (e) => {
+        useGit().cmd_user()
+            .then((userInfo) => {
+                e.reply('gitUserGetReply', userInfo)
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitUserGetReply', shakeFn([ false, err ]))
+            })
+    })
+    ipcMain.on('gitUserSet', (e, { key, val }) => {
+        useGit().cmd_user_set(key, val)
+            .then(() => {
+                e.reply('gitUserSetReply', [ true, 'success' ])
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitUserSetReply', shakeFn([ false, err ]))
             })
     })
     // endregion

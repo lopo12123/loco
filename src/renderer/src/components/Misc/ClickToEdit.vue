@@ -26,7 +26,8 @@ const startEdit = () => {
         <input v-if="state === 'edit'" class="edit"
                type="text" spellcheck="false" v-model="editVal">
         <i v-if="state === 'edit'" class="iconfont icon-guanbi btn-like" title="取消" @click="state = 'show'"/>
-        <i v-if="state === 'edit'" class="iconfont icon-check btn-like" title="确认" @click="emits('do-edit', editVal)"/>
+        <i v-if="state === 'edit'" class="iconfont icon-check btn-like" title="确认"
+           @click="emits('do-edit', editVal); state = 'show'"/>
     </div>
 </template>
 
@@ -35,6 +36,7 @@ const startEdit = () => {
     position: relative;
     width: 100%;
     height: 100%;
+    min-width: 120px;
     min-height: 20px;
     font-family: cursive;
     display: flex;

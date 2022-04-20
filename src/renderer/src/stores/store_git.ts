@@ -48,6 +48,23 @@ class Store_git {
 
     // endregion
 
+    // region ignore
+    useIgnoreInfo(): string
+    useIgnoreInfo(val: string): void
+    useIgnoreInfo(val?: string): string | void {
+        if(val !== undefined) {
+            sessionStorage.setItem('ignore-info', val)
+        }
+        else {
+            try {
+                return sessionStorage.getItem('ignore-info') ?? ''
+            }catch (e) {
+                return ''
+            }
+        }
+    }
+    // endregion
+
     // region log
     useLogInfo(): LogResult | null
     useLogInfo(val: LogResult | null): void

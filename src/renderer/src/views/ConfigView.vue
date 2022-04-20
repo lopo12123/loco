@@ -8,7 +8,6 @@ import { useGitStore } from "../stores/store_git";
 import ClickToEdit from "../components/Misc/ClickToEdit.vue";
 
 const router = useRouter()
-const remoteInfo = ref<[ string, string ]>(useGitStore().useRemoteInfo())
 
 onBeforeMount(() => {
     if(remoteInfo.value === null) remoteInfo.value = [ '', '' ]
@@ -33,9 +32,11 @@ const openInNotepad = () => {
 const updateAllConfig = () => {
     updateRemote('get', false)
     updateUser('get', '', false)
+    updateIgnore('get', false)
 }
 
 // region remote
+const remoteInfo = ref<[ string, string ]>(useGitStore().useRemoteInfo())
 const remoteUrlToSet = ref('')
 const remoteOperateType = ref<'add' | 'set-url'>('add')
 const remoteDialogVisible = ref(false)
@@ -114,6 +115,62 @@ const updateUser = (type: 'get' | 'name' | 'email', val: string, toast: boolean 
 }
 // endregion
 
+// region ignore
+const ignoreInfo = ref(useGitStore().useIgnoreInfo())
+const ignoreDialogVisible = ref(false)
+const ignoreRules: string[] = [
+    '每一行指定一条忽略规则',
+    '以井号"#"开头表示注释',
+    '以斜杠"/"开头表示目录',
+    '以星号"*"通配多个字符',
+    '以两个星号"**"通配多级目录',
+    '以问号通配单个字符',
+    '以方括号"[]"包含单个字符的匹配列表',
+    '以叹号"!"表示不忽略匹配到的文件或目录',
+    '对.gitignore配置文件按行从上到下进行规则匹配'
+]
+const ignoreExamples: { rule: string, mean: string }[] = [
+    { rule: 'bin/', mean: '忽略当前路径下的bin文件, 该文件下的所有内容都会忽略(但不包含bin文件本身)' },
+    { rule: '/bin', mean: '忽略根路径下的bin文件' },
+    { rule: '/*.doc', mean: '忽略根路径下的子文件后缀为doc的文件(cat.doc被忽略, 但不会忽略lib/cat.doc文件)' },
+    { rule: '*.doc', mean: '忽略所有的后缀为doc的文件' },
+    { rule: '**/animal', mean: '忽略任意层级下的animal文件' },
+    { rule: '!cat.doc', mean: '不忽略当前目录下的cat.doc文件' }
+]
+const ignoreFileStrToSet = ref('')
+const ifEditIgnore = ref(false)
+const updateIgnore = (type: 'get' | 'set', toast: boolean = true) => {
+    if(type === 'get') {
+        useIpcRenderer().send('gitIgnoreGet')
+        useIpcRenderer().once('gitIgnoreGetReply', (e, [ res, fileStr ]) => {
+            if(res) {
+                ignoreInfo.value = fileStr
+                ignoreFileStrToSet.value = fileStr
+                useGitStore().useIgnoreInfo(fileStr)
+                toast ? useToastStore().success('reread ignore config') : ''
+            }
+            else {
+                useToastStore().error(fileStr)
+            }
+        })
+    }
+    else if(type === 'set') {
+        ifEditIgnore.value = false
+        useIpcRenderer().send('gitIgnoreSet', ignoreFileStrToSet.value)
+        useIpcRenderer().once('gitIgnoreSetReply', (e, [ res, msg ]) => {
+            if(res) {
+                ignoreInfo.value = ignoreFileStrToSet.value
+                useGitStore().useIgnoreInfo(ignoreInfo.value)
+                useToastStore().success('ignore config updated')
+            }
+            else {
+                useToastStore().error(msg)
+            }
+        })
+    }
+}
+// endregion
+
 /**
  * @description 返回 git-view 页面
  */
@@ -138,6 +195,24 @@ const back = () => {
                 <div class="remote-dialog-footer">
                     <div class="btn" @click="remoteDialogVisible = false"><i>取消</i></div>
                     <div class="btn" @click="updateRemote('set')"><i>确认</i></div>
+                </div>
+            </template>
+        </Dialog>
+
+        <Dialog class="ignore-dialog" header="ignore规则/示例" v-model:visible="ignoreDialogVisible">
+            <div class="ignore-dialog-content">
+                <span style="color: khaki">规则:</span>
+                <span v-for="(item, index) in ignoreRules" :key="`rule-${index}`">
+                    {{ index + 1 }}: {{ item }}
+                </span>
+                <span style="color: khaki">示例:</span>
+                <span v-for="(item, index) in ignoreExamples" :key="`example-${index}`">
+                    {{ index + 1 }}: <span class="rule-code">{{ item.rule }}</span> {{ item.mean }}
+                </span>
+            </div>
+            <template #footer>
+                <div class="ignore-dialog-footer">
+                    <div class="btn" @click="ignoreDialogVisible = false"><i>关闭</i></div>
                 </div>
             </template>
         </Dialog>
@@ -184,6 +259,23 @@ const back = () => {
                     <ClickToEdit style="width: 200px" :text="userInfo.email"
                                  @do-edit="updateUser('email', $event)"/>
                 </div>
+            </div>
+            <div class="ignore-item">
+                <div class="ignore-item-banner">
+                    <span style="color: khaki;">忽略(ignore)</span>
+                    <i class="iconfont icon-message btn-like"
+                       title="查看ignore规则" @click="ignoreDialogVisible = true"/>
+                    <i class="iconfont icon-shuaxin btn-like"
+                       title="重新获取忽略规则" @click="updateIgnore('get')"/>
+                    <i v-if="!ifEditIgnore" class="iconfont icon-record1 btn-like"
+                       title="编辑" @click="ifEditIgnore = true"/>
+                    <i v-if="ifEditIgnore" class="iconfont icon-guanbi btn-like"
+                       title="取消" @click="ignoreFileStrToSet = ignoreInfo; ifEditIgnore = false"/>
+                    <i v-if="ifEditIgnore" class="iconfont icon-check btn-like"
+                       title="确认" @click="updateIgnore('set')"/>
+                </div>
+
+                <textarea class="ignore-item-file" v-model="ignoreFileStrToSet" :disabled="!ifEditIgnore"/>
             </div>
         </div>
     </div>
@@ -234,7 +326,7 @@ const back = () => {
             overflow: auto hidden;
 
             .line1, .line2 {
-                @include mixin.doScrollbar(#aaaaaa, 2px);
+                @include mixin.doScrollbar(#777777, 2px);
                 position: relative;
                 width: 100%;
                 height: 30px;
@@ -245,6 +337,40 @@ const back = () => {
                 user-select: none;
                 cursor: pointer;
                 text-decoration: underline;
+            }
+        }
+
+        .ignore-item {
+            position: relative;
+            width: 100%;
+            height: calc(100% - 120px);
+
+            .ignore-item-banner {
+                position: relative;
+                width: 100%;
+                height: 30px;
+                line-height: 30px;
+            }
+
+            .ignore-item-file {
+                @include mixin.doScrollbar(#777777, 4px);
+                position: relative;
+                width: calc(100% - 10px);
+                height: calc(100% - 40px);
+                padding: 5px;
+                border: solid 1px #86a5b1;
+                outline: none;
+                background-color: transparent;
+                color: #86a5b1;
+                resize: none;
+
+                &:disabled {
+                    opacity: 0.7;
+                }
+
+                &:focus {
+                    border-color: #9feaf9;
+                }
             }
         }
     }
@@ -291,6 +417,50 @@ const back = () => {
     .remote-dialog-footer {
         position: relative;
         width: 260px;
+        background-color: #2f3241;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        .btn {
+            position: relative;
+            height: 20px;
+            margin: 0 5px;
+            line-height: 20px;
+            cursor: pointer;
+
+            &:hover {
+                color: #9feaf9;
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.ignore-dialog {
+    .ignore-dialog-content {
+        @include mixin.doScrollbar(#777777, 4px);
+        width: 300px;
+        height: 100px;
+        background-color: #2f3241;
+        font-family: cursive;
+        line-height: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        overflow: hidden auto;
+
+        .rule-code {
+            font-family: Consolas;
+            font-style: italic;
+            opacity: 0.7;
+        }
+    }
+
+    .ignore-dialog-footer {
+        position: relative;
+        width: 300px;
         background-color: #2f3241;
         display: flex;
         align-items: center;

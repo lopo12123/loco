@@ -301,7 +301,7 @@ const doCommit = (type: 'show' | 'confirm') => {
         }
 
         .line {
-            @include mixin.doScrollbar(#aaaaaa, 2px);
+            @include mixin.doScrollbar(#777777, 2px);
             position: relative;
             width: 100%;
             height: 30px;
@@ -323,7 +323,7 @@ const doCommit = (type: 'show' | 'confirm') => {
     }
 
     .body {
-        @include mixin.doScrollbar(#aaaaaa, 4px);
+        @include mixin.doScrollbar(#777777, 4px);
         position: relative;
         width: 100%;
         height: calc(100% - 130px);
@@ -366,7 +366,7 @@ const doCommit = (type: 'show' | 'confirm') => {
             }
 
             .filename {
-                @include mixin.doScrollbar(#aaaaaa, 2px);
+                @include mixin.doScrollbar(#777777, 2px);
                 width: calc(100% - 140px);
                 white-space: nowrap;
                 overflow: auto hidden;

@@ -82,14 +82,34 @@ const menuItems = [
         label: 'pull',
         icon: 'iconfont icon-jiantou_zuoxia',
         command() {
-            console.log('do pull')
+            useToastStore().info('pulling, please wait.')
+            useIpcRenderer().send('gitPull')
+            useIpcRenderer().once('gitPullReply', (e, [ res, msg ]) => {
+                if(res) {
+                    useToastStore().success('pull success')
+                    updateGitInfo()
+                }
+                else {
+                    useToastStore().error(msg)
+                }
+            })
         }
     },
     {
         label: 'push',
         icon: 'iconfont icon-jiantou_youshang',
         command() {
-            console.log('do push')
+            useToastStore().info('pushing, please wait.')
+            useIpcRenderer().send('gitPush')
+            useIpcRenderer().once('gitPushReply', (e, [ res, msg ]) => {
+                if(res) {
+                    useToastStore().success('push success')
+                    updateGitInfo()
+                }
+                else {
+                    useToastStore().error(msg)
+                }
+            })
         }
     }
 ]
@@ -384,6 +404,7 @@ const doCommit = (type: 'show' | 'confirm') => {
                 width: fit-content;
                 display: flex;
                 align-items: center;
+
                 .status-btn {
                     position: relative;
                     width: 30px;

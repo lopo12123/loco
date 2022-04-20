@@ -11,9 +11,12 @@ const router = useRouter()
 const logInfoRef = ref<LogResult | null>(useGitStore().useLogInfo())
 
 onBeforeMount(() => {
-    if(!logInfoRef.value) updateLogInfo()
+    updateLogInfo()
 })
 
+/**
+ * @description 获取最新的log记录
+ */
 const updateLogInfo = () => {
     useIpcRenderer().send('gitLog')
     useIpcRenderer().once('gitLogReply', (e, [ res, logInfo ]) => {

@@ -166,7 +166,7 @@ const setIpc = (winRef: BrowserWindow | null) => {
     ipcMain.on('gitUserGet', (e) => {
         useGit().cmd_user()
             .then((userInfo) => {
-                e.reply('gitUserGetReply', userInfo)
+                e.reply('gitUserGetReply', [ true, userInfo ])
             })
             .catch((err) => {
                 if(err instanceof Error) err = err.message

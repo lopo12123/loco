@@ -39,7 +39,7 @@ const startEdit = () => {
     min-width: 120px;
     min-height: 20px;
     font-family: cursive;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: flex-start;
 

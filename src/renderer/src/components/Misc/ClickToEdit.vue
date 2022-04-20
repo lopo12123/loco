@@ -62,6 +62,7 @@ const startEdit = () => {
         outline: none;
         background-color: transparent;
         color: #86a5b1;
+        font-family: cursive;
 
         &:focus {
             border-color: #9feaf9;

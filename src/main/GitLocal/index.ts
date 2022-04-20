@@ -39,23 +39,6 @@ class Git {
         })
     }
 
-    // todo
-    cmd_config_overview() {
-        return new Promise((resolve, reject) => {
-            if(!this.#git) reject('Git has not been initialized.')
-            else {
-                this.#git
-                    .getConfig('user.email', 'local')
-                    .then((res) => {
-                        resolve(res)
-                    })
-                    .catch((err) => {
-                        reject(err)
-                    })
-            }
-        })
-    }
-
     cmd_log(): Promise<LogResult> {
         return new Promise<LogResult>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
@@ -92,22 +75,22 @@ class Git {
         })
     }
 
-    cmd_remote_set(name: string, url: string) {
-        return new Promise((resolve, reject) => {
+    cmd_remote_set(name: string, url: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
             else {
                 this.#git
                     .remote([])
                     .then((remoteNames) => {
                         if(!remoteNames || !remoteNames.includes(name)) {
-                            return this.#git!.remote(['add', name, url])
+                            return this.#git!.remote([ 'add', name, url ])
                         }
                         else {
-                            return this.#git!.remote(['set-url', name, url])
+                            return this.#git!.remote([ 'set-url', name, url ])
                         }
                     })
-                    .then((res) => {
-                        resolve(res)
+                    .then(() => {
+                        resolve()
                     })
                     .catch((err) => {
                         reject(err)
@@ -137,7 +120,7 @@ class Git {
     cmd_toplevel(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
-            else this.#git.revparse(['--show-toplevel'], (err, data) => {
+            else this.#git.revparse([ '--show-toplevel' ], (err, data) => {
                 err ? reject(err) : resolve(data.replace(/[\n]/g, ''))
             })
         })

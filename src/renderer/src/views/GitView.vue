@@ -172,10 +172,6 @@ const doCommit = (type: 'show' | 'confirm') => {
                 <span class="h-key">根路径(root) </span>
                 <span class="root-path" @click="openInExplorer('base', '')">{{ baseDir }}</span>
                 <div class="op-btn">
-                    <div class="btn" title="获取最新状态"
-                         @click="updateGitInfo">
-                        <i class="iconfont icon-shuaxin"/>
-                    </div>
                     <div class="btn" @click="toggleDropdown">
                         <i class="iconfont icon-diandiandian"/>
                     </div>
@@ -208,8 +204,16 @@ const doCommit = (type: 'show' | 'confirm') => {
                 <div class="index">序号</div>
                 <div class="marker">类型</div>
                 <div class="filename">文件</div>
-                <div class="commit-btn" title="commit selected files" @click="doCommit('show')">
-                    <i class="iconfont icon-check"/>commit
+
+                <div class="right-btns">
+                    <div class="status-btn" title="获取最新状态"
+                         @click="updateGitInfo">
+                        <i class="iconfont icon-shuaxin"/>
+                    </div>
+                    <div class="status-btn" title="提交选中文件"
+                         @click="doCommit('show')">
+                        <i class="iconfont icon-check"/>
+                    </div>
                 </div>
             </div>
             <div class="line" v-for="(item, index) in statusInfoRef.files" :key="item.path">
@@ -259,13 +263,6 @@ const doCommit = (type: 'show' | 'confirm') => {
         cursor: default;
 
         .path-block {
-
-            &:hover {
-                .op-btn {
-                    opacity: 1;
-                }
-            }
-
             .root-path {
                 cursor: pointer;
 
@@ -281,12 +278,10 @@ const doCommit = (type: 'show' | 'confirm') => {
                 height: 100%;
                 top: 0;
                 left: 0;
-                opacity: 1; // 0;
                 pointer-events: none;
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
-                transition: opacity 1s ease;
 
                 .btn {
                     position: relative;
@@ -383,34 +378,29 @@ const doCommit = (type: 'show' | 'confirm') => {
             top: 0;
             z-index: 10;
 
-            .commit-btn {
+            .right-btns {
                 position: absolute;
-                width: 60px;
-                height: 20px;
-                top: 5px;
                 right: 0;
-                cursor: pointer;
-                line-height: 20px;
-                text-align: center;
+                width: fit-content;
+                display: flex;
+                align-items: center;
+                .status-btn {
+                    position: relative;
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 5px;
+                    text-align: center;
+                    line-height: 30px;
+                    cursor: pointer;
+                    pointer-events: auto;
 
-                &::after {
-                    position: absolute;
-                    content: "";
-                    height: 1px;
-                    width: 0;
-                    bottom: 0;
-                    left: 50%;
-                    background-color: #9feaf9;
-                    transition: all 0.2s linear;
-                }
+                    &:hover {
+                        background-color: #cccccc1a;
+                    }
 
-                &:hover::after {
-                    width: 100%;
-                    left: 0;
-                }
-
-                i {
-                    font-size: 12px;
+                    i {
+                        font-size: 12px;
+                    }
                 }
             }
         }

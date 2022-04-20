@@ -46,8 +46,8 @@ const setIpc = (winRef: BrowserWindow | null) => {
     // region [browser]
     ipcMain.on('browser', (e, { urlToOpen }) => {
         exec(`start ${ urlToOpen }`, (err) => {
-            if(err) e.reply('browserReply', [false, err.message])
-            else e.reply('browserReply', [true, 'success'])
+            if(err) e.reply('browserReply', [ false, err.message ])
+            else e.reply('browserReply', [ true, 'success' ])
         })
     })
     // endregion
@@ -88,15 +88,12 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 e.reply('gitCommitReply', shakeFn([ false, err ]))
             })
     })
-    // ipcMain.on('gitConfig', (e, args) => {
-    //
-    // })
     ipcMain.on('gitConfigEdit', (e) => {
         useGit().cmd_toplevel()
             .then((rootDir) => {
-                exec(`notepad.exe ${joinPath(rootDir, './.git/config')}`, (err) => {
-                    if(err) e.reply('gitConfigEditReply', [false, err.message])
-                    else e.reply('gitConfigEditReply', [true, 'success'])
+                exec(`notepad.exe ${ joinPath(rootDir, './.git/config') }`, (err) => {
+                    if(err) e.reply('gitConfigEditReply', [ false, err.message ])
+                    else e.reply('gitConfigEditReply', [ true, 'success' ])
                 })
             })
             .catch((err) => {
@@ -122,10 +119,32 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 e.reply('gitLogReply', shakeFn([ false, err ]))
             })
     })
+    ipcMain.on('gitRemoteGet', (e) => {
+        useGit().cmd_remote()
+            .then((res) => {
+                e.reply('gitRemoteGetReply', [true, res])
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitRemoteGetReply', shakeFn([ false, err ]))
+            })
+    })
+    ipcMain.on('gitRemoteSet', (e, { name, url }) => {
+        useGit().cmd_remote_set(name, url)
+            .then(() => {
+                e.reply('gitRemoteSetReply', [true, 'success'])
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitRemoteSetReply', shakeFn([ false, err ]))
+            })
+    })
     ipcMain.on('gitReset', (e, { hash }) => {
         useGit().cmd_reset(hash)
             .then((res) => {
-                e.reply('gitResetReply', [true, res])
+                e.reply('gitResetReply', [ true, res ])
             })
             .catch((err) => {
                 if(err instanceof Error) err = err.message

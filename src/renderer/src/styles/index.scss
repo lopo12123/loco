@@ -136,4 +136,19 @@ img {
         left: 0;
     }
 }
+
+.btn-like {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    display: inline-block;
+
+    &:hover {
+        background-color: #cccccc1a;
+    }
+}
 // endregion

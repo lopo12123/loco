@@ -3,11 +3,24 @@ import { useRouter } from "vue-router";
 import Dialog from "primevue/dialog";
 import { useIpcRenderer } from "../stores/store_ipc";
 import { useToastStore } from "../stores/store_toast";
-import { ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import { useGitStore } from "../stores/store_git";
 
 const router = useRouter()
-const remoteInfo = ref(useGitStore().useRemoteInfo())
+const remoteInfo = ref<[ string, string ]>(useGitStore().useRemoteInfo())
+
+onBeforeMount(() => {
+    if(remoteInfo.value === null) {
+        useToastStore().warn('No remote info available.')
+        router.push({
+            name: 'Starter'
+        })
+        remoteInfo.value = [ 'origin', '' ]
+    }
+    else if(remoteInfo.value[0] === '') {
+        remoteInfo.value[0] = 'origin'
+    }
+})
 
 /**
  * @description 发送ipc, 使用系统记事本打开config文件
@@ -41,7 +54,10 @@ const back = () => {
     <div class="config-view">
         <Dialog class="remote-dialog" header="定义远程" v-model:visible="remoteDialogVisible">
             <div class="remote-dialog-content">
-
+                <div class="remote-name">名称: <span class="remote-name-val">{{ remoteInfo[0] }}</span></div>
+                <div class="remote-url">url:</div>
+                <input class="remote-url-ipt" v-model="remoteInfo[1]"
+                       type="text" placeholder="请输入远程url" spellcheck="false">
             </div>
             <template #footer>
                 <div class="remote-dialog-footer">
@@ -168,11 +184,36 @@ const back = () => {
         width: 260px;
         height: 60px;
         background-color: #2f3241;
+        font-family: cursive;
+        line-height: 20px;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
         justify-content: space-between;
         overflow: hidden;
+
+        .remote-name, .remote-url {
+            height: 20px;
+        }
+
+        .remote-name-val {
+            cursor: not-allowed;
+            text-decoration: underline;
+        }
+
+        .remote-url-ipt {
+            width: 100%;
+            height: 19px;
+            background-color: transparent;
+            border: none;
+            border-bottom: solid 1px #86a5b1;
+            outline: none;
+            color: #86a5b1;
+            font-family: cursive;
+            &:focus {
+                border-color: #9feaf9;
+            }
+        }
     }
 
     .remote-dialog-footer {

@@ -15,10 +15,7 @@ onBeforeMount(() => {
         router.push({
             name: 'Starter'
         })
-        remoteInfo.value = [ 'origin', '' ]
-    }
-    else if(remoteInfo.value[0] === '') {
-        remoteInfo.value[0] = 'origin'
+        remoteInfo.value = [ '', '' ]
     }
 })
 
@@ -32,19 +29,54 @@ const openInNotepad = () => {
     })
 }
 
+/**
+ * @description 重新获取所有信息
+ */
+const updateAllConfig = () => {
+    useToastStore().info('暂不支持, 请手动逐条刷新')
+}
+
 // region git remote
-const remoteUrlToSet = ref(remoteInfo.value ? remoteInfo.value[1] : '')
+const remoteUrlToSet = ref('')
 const remoteOperateType = ref<'add' | 'set-url'>('add')
 const remoteDialogVisible = ref(false)
-const doRemote = () => {
-    const newUrl = remoteUrlToSet.value
-    if((!newUrl.startsWith('https://') && !newUrl.startsWith('git@')) || (!newUrl.endsWith('.git'))) {
-        useToastStore().warn('invalid url.')
+const updateRemote = (type: 'get' | 'set') => {
+    if(type === 'get') {
+        useIpcRenderer().send('gitRemoteGet')
+        useIpcRenderer().once('gitRemoteGetReply', (e, [ res, msg ]) => {
+            if(res) {
+                remoteInfo.value = msg
+                useGitStore().useRemoteInfo(msg)
+                useToastStore().success('remote config updated')
+            }
+            else {
+                useToastStore().error(msg)
+            }
+        })
     }
-    else {
+    else if(type === 'set') {
+        const newUrl = remoteUrlToSet.value
+        if((!newUrl.startsWith('https://') && !newUrl.startsWith('git@')) || (!newUrl.endsWith('.git'))) {
+            useToastStore().warn('invalid url.')
+        }
+        else {
+            const newName = remoteInfo.value[0] === '' ? 'origin' : remoteInfo.value[0]
+            const newUrl = remoteUrlToSet.value
+            remoteDialogVisible.value = false
 
+            useIpcRenderer().send('gitRemoteSet', { name: newName, url: newUrl })
+            useIpcRenderer().once('gitRemoteSetReply', (e, [ res, msg ]) => {
+                if(res) {
+                    remoteInfo.value = [ newName, newUrl ]
+                    useGitStore().useRemoteInfo([ newName, newUrl ])
+                    useToastStore().success('remote config updated')
+                }
+                else {
+                    useToastStore().error(msg)
+                }
+            })
+        }
     }
-    console.log(remoteOperateType.value, remoteUrlToSet.value)
 }
 // endregion
 
@@ -70,7 +102,7 @@ const back = () => {
             <template #footer>
                 <div class="remote-dialog-footer">
                     <div class="btn" @click="remoteDialogVisible = false"><i>取消</i></div>
-                    <div class="btn" @click="doRemote"><i>确认</i></div>
+                    <div class="btn" @click="updateRemote('set')"><i>确认</i></div>
                 </div>
             </template>
         </Dialog>
@@ -78,24 +110,31 @@ const back = () => {
         <div class="banner">
             <div class="banner-left">
                 <span class="hover-underline" @click="openInNotepad">在文件中查看/编辑</span>
-                <i class="iconfont icon-shuaxin" title="获取最新配置"/>
+                <i class="iconfont icon-shuaxin btn-like"
+                   title="重新获取全部配置信息" @click="updateAllConfig"/>
             </div>
             <div class="banner-right">
-                <i class="iconfont icon-back" title="返回" @click="back"/>
+                <i class="iconfont icon-back btn-like" title="返回" @click="back"/>
             </div>
         </div>
-        <div class="detail">
-            <div class="line">
-                <span class="key">远程(remote): </span>
-                <span v-if="remoteInfo && remoteInfo[0] !== '' && remoteInfo[1] !== ''"
-                      class="editable" title="点击编辑"
-                      @click="remoteOperateType = 'set-url'; remoteDialogVisible = true">
-                    {{ remoteInfo[0] + '/' + remoteInfo[1] }}
-                </span>
-                <span v-else class="editable" title="点击添加"
-                      @click="remoteOperateType = 'add'; remoteDialogVisible = true">
-                    远程未定义
-                </span>
+        <div class="overview">
+            <div class="config-item">
+                <div class="line1">
+                    <span class="key">远程(remote)</span>
+                    <i class="iconfont icon-shuaxin btn-like"
+                       title="重新获取远程信息" @click="updateRemote('get')"/>
+                </div>
+                <div class="line2">
+                    <span v-if="remoteInfo && remoteInfo[0] !== '' && remoteInfo[1] !== ''"
+                          class="editable" title="点击编辑"
+                          @click="remoteOperateType = 'set-url'; remoteUrlToSet = remoteInfo[1]; remoteDialogVisible = true">
+                        {{ remoteInfo[0] + '/' + remoteInfo[1] }}
+                    </span>
+                    <span v-else class="editable" title="点击添加"
+                          @click="remoteOperateType = 'add'; remoteDialogVisible = true">
+                        远程未定义
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -111,6 +150,21 @@ const back = () => {
     font-family: cursive;
     user-select: none;
 
+    .btn-like {
+        position: relative;
+        width: 30px;
+        height: 30px;
+        border-radius: 5px;
+        text-align: center;
+        line-height: 30px;
+        cursor: pointer;
+        display: inline-block;
+
+        &:hover {
+            background-color: #cccccc1a;
+        }
+    }
+
     .banner {
         position: relative;
         width: 100%;
@@ -118,21 +172,6 @@ const back = () => {
         display: flex;
         align-items: center;
         justify-content: space-between;
-
-        %btn-base {
-            position: relative;
-            width: 30px;
-            height: 30px;
-            border-radius: 5px;
-            text-align: center;
-            line-height: 30px;
-            cursor: pointer;
-            display: inline-block;
-
-            &:hover {
-                background-color: #cccccc1a;
-            }
-        }
 
         .banner-left {
             span {
@@ -142,31 +181,31 @@ const back = () => {
             }
 
             i {
-                @extend %btn-base;
                 margin-left: 5px;
-            }
-        }
-
-        .banner-right {
-            i {
-                @extend %btn-base;
             }
         }
     }
 
-    .detail {
+    .overview {
         position: relative;
         width: 100%;
         height: calc(100% - 30px);
 
-        .line {
-            @include mixin.doScrollbar(#aaaaaa, 2px);
+        .config-item {
             position: relative;
             width: 100%;
-            height: 30px;
+            height: 60px;
             line-height: 30px;
             white-space: nowrap;
             overflow: auto hidden;
+
+            .line1, .line2 {
+                @include mixin.doScrollbar(#aaaaaa, 2px);
+                position: relative;
+                width: 100%;
+                height: 30px;
+                overflow: auto hidden;
+            }
 
             .key {
                 position: sticky;
@@ -178,10 +217,7 @@ const back = () => {
             .editable {
                 user-select: none;
                 cursor: pointer;
-
-                &:hover {
-                    text-decoration: underline;
-                }
+                text-decoration: underline;
             }
         }
     }

@@ -108,6 +108,28 @@ const setIpc = (winRef: BrowserWindow | null) => {
             else e.reply('gitDetectReply', [ true, stdout.replace(/[\n]/g, '') ])
         })
     })
+    ipcMain.on('gitIgnoreGet', (e) => {
+        useGit().cmd_ignore()
+            .then((fileStr) => {
+                e.reply('gitIgnoreGetReply', [ true, fileStr ])
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitIgnoreGetReply', shakeFn([ false, err ]))
+            })
+    })
+    ipcMain.on('gitIgnoreSet', (e, fileStr) => {
+        useGit().cmd_ignore_set(fileStr)
+            .then(() => {
+                e.reply('gitIgnoreSetReply', [true, 'success'])
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitIgnoreSetReply', shakeFn([ false, err ]))
+            })
+    })
     ipcMain.on('gitLog', (e) => {
         useGit().cmd_log()
             .then((res) => {

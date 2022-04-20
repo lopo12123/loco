@@ -11,16 +11,10 @@ const router = useRouter()
 const remoteInfo = ref<[ string, string ]>(useGitStore().useRemoteInfo())
 
 onBeforeMount(() => {
-    // if(remoteInfo.value === null) {
-    //     useToastStore().warn('No remote info available.')
-    //     router.push({
-    //         name: 'Starter'
-    //     })
-    //     remoteInfo.value = [ '', '' ]
-    // }
-
     if(remoteInfo.value === null) remoteInfo.value = [ '', '' ]
     if(userInfo.value === null) userInfo.value = { name: '', email: '' }
+
+    updateAllConfig()
 })
 
 /**
@@ -37,21 +31,22 @@ const openInNotepad = () => {
  * @description 重新获取所有信息
  */
 const updateAllConfig = () => {
-    useToastStore().info('暂不支持, 请手动逐条刷新')
+    updateRemote('get', false)
+    updateUser('get', '', false)
 }
 
 // region remote
 const remoteUrlToSet = ref('')
 const remoteOperateType = ref<'add' | 'set-url'>('add')
 const remoteDialogVisible = ref(false)
-const updateRemote = (type: 'get' | 'set') => {
+const updateRemote = (type: 'get' | 'set', toast: boolean = true) => {
     if(type === 'get') {
         useIpcRenderer().send('gitRemoteGet')
         useIpcRenderer().once('gitRemoteGetReply', (e, [ res, msg ]) => {
             if(res) {
                 remoteInfo.value = msg
                 useGitStore().useRemoteInfo(msg)
-                useToastStore().success('reread remote config')
+                toast ? useToastStore().success('reread remote config') : ''
             }
             else {
                 useToastStore().error(msg)
@@ -86,14 +81,14 @@ const updateRemote = (type: 'get' | 'set') => {
 
 // region user
 const userInfo = ref<{ name: string, email: string } | null>(useGitStore().useUserInfo())
-const updateUser = (type: 'get' | 'name' | 'email', val: string) => {
+const updateUser = (type: 'get' | 'name' | 'email', val: string, toast: boolean = true) => {
     if(type === 'get') {
         useIpcRenderer().send('gitUserGet')
         useIpcRenderer().once('gitUserGetReply', (e, [ res, info ]) => {
             if(res) {
                 userInfo.value = info
                 useGitStore().useUserInfo(info)
-                useToastStore().success('reread user config')
+                toast ? useToastStore().success('reread user config') : ''
             }
             else {
                 useToastStore().error(info)

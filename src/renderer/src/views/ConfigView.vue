@@ -32,11 +32,19 @@ const openInNotepad = () => {
     })
 }
 
-// region git remote `git remote add` / `git remote set-url`
+// region git remote
+const remoteUrlToSet = ref(remoteInfo.value ? remoteInfo.value[1] : '')
 const remoteOperateType = ref<'add' | 'set-url'>('add')
 const remoteDialogVisible = ref(false)
-const doRemote = (url: string) => {
-    console.log(remoteOperateType.value, url)
+const doRemote = () => {
+    const newUrl = remoteUrlToSet.value
+    if((!newUrl.startsWith('https://') && !newUrl.startsWith('git@')) || (!newUrl.endsWith('.git'))) {
+        useToastStore().warn('invalid url.')
+    }
+    else {
+
+    }
+    console.log(remoteOperateType.value, remoteUrlToSet.value)
 }
 // endregion
 
@@ -56,7 +64,7 @@ const back = () => {
             <div class="remote-dialog-content">
                 <div class="remote-name">名称: <span class="remote-name-val">{{ remoteInfo[0] }}</span></div>
                 <div class="remote-url">url:</div>
-                <input class="remote-url-ipt" v-model="remoteInfo[1]"
+                <input class="remote-url-ipt" v-model="remoteUrlToSet"
                        type="text" placeholder="请输入远程url" spellcheck="false">
             </div>
             <template #footer>
@@ -210,6 +218,7 @@ const back = () => {
             outline: none;
             color: #86a5b1;
             font-family: cursive;
+
             &:focus {
                 border-color: #9feaf9;
             }

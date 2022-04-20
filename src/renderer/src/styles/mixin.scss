@@ -1,5 +1,5 @@
 // 滚动条样式
-@mixin doScrollbar($color: #aaaaaa, $width: 8px) {
+@mixin doScrollbar($color: #777777, $width: 8px) {
     &::-webkit-scrollbar {
         width: $width !important;
         height: $width !important;

@@ -125,6 +125,43 @@ class Git {
             })
         })
     }
+
+    cmd_user(): Promise<{ name: string, email: string }> {
+        return new Promise<{ name: string, email: string }>((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else {
+                const mergedRes: { name: string, email: string } = { name: '', email: '' }
+                this.#git.getConfig('user.name')
+                    .then((user_name) => {
+                        mergedRes.name = user_name.value ?? ''
+                        return this.#git!.getConfig('user.email')
+                    })
+                    .then((user_email) => {
+                        mergedRes.email = user_email.value ?? ''
+                        resolve(mergedRes)
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    })
+            }
+        })
+    }
+
+    cmd_user_set(key: 'name' | 'email', val: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else {
+                this.#git
+                    .addConfig(`user.${ key }`, val)
+                    .then(() => {
+                        resolve()
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    })
+            }
+        })
+    }
 }
 
 const _ = new Git()
@@ -132,7 +169,7 @@ export const useGit = () => _
 
 // _.base('D:\\GitProjects\\pool\\jest')
 //     .then((self) => {
-//         return self.cmd_remote_set('new1', 'git@newurl.git')
+//         return self.cmd_user()
 //     })
 //     .then((res) => {
 //         console.log(res)

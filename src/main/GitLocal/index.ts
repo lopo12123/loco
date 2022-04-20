@@ -1,10 +1,11 @@
 import simpleGit, { CommitResult, LogResult, SimpleGit, StatusResult } from "simple-git";
 import { join as joinPath, resolve as resolvePath } from "path";
+import { readFileSync, writeFileSync } from "fs";
 
 class Git {
     #git: SimpleGit | null = null
 
-    base(path: string) {
+    base(path: string): Promise<Git> {
         path = resolvePath(path)
         if(path.endsWith('.git')) path = joinPath(path, '..')
         return new Promise<Git>((resolve, reject) => {
@@ -21,11 +22,10 @@ class Git {
     }
 
     cmd_commit(files: string[], msg: string): Promise<CommitResult> {
-        if(!msg) msg = 'system: No commit message'
-
         return new Promise<CommitResult>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
             else {
+                if(!msg) msg = 'system: No commit message'
                 this.#git.add(files, (err_add) => {
                     if(err_add) reject(err_add)
                     else {
@@ -35,6 +35,41 @@ class Git {
                         })
                     }
                 })
+            }
+        })
+    }
+
+    cmd_ignore(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else {
+                this.cmd_toplevel()
+                    .then((rootDir) => {
+                        const fileStr = readFileSync(joinPath(rootDir, './.gitignore'), { encoding: 'utf-8' })
+                        resolve(fileStr)
+                    })
+                    .catch((err) => {
+                        // 'ENOENT' (error no entry) means no such file
+                        if(err.code === 'ENOENT') resolve('')
+                        // other error
+                        else reject(err)
+                    })
+            }
+        })
+    }
+
+    cmd_ignore_set(val: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else {
+                this.cmd_toplevel()
+                    .then((rootDir) => {
+                        writeFileSync(joinPath(rootDir, './.gitignore'), val, { encoding: 'utf-8' })
+                        resolve()
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    })
             }
         })
     }
@@ -169,10 +204,14 @@ export const useGit = () => _
 
 // _.base('D:\\GitProjects\\pool\\jest')
 //     .then((self) => {
-//         return self.cmd_user()
+//         return self.cmd_ignore()
 //     })
 //     .then((res) => {
 //         console.log(res)
+//         return _.cmd_ignore_set(res.split('\n').slice(3).join('\n'))
+//     })
+//     .then(() => {
+//         console.log('change success')
 //     })
 //     .catch((err) => {
 //         console.log(err)

@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "11537859",
+      "name": "record",
+      "font_class": "record1",
+      "unicode": "e659",
+      "unicode_decimal": 58969
+    },
+    {
       "icon_id": "6847621",
       "name": "重选",
       "font_class": "zhongxuan",

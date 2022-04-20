@@ -112,14 +112,30 @@ class Store_git {
 
     // endregion
 
+    // region user
+    useUserInfo(): { name: string, email: string } | null
+    useUserInfo(val: { name: string, email: string } | null): void
+    useUserInfo(val?: { name: string, email: string } | null): { name: string, email: string } | null | void {
+        if(val !== undefined) {
+            val === null
+                ? sessionStorage.removeItem('user-info')
+                : sessionStorage.setItem('user-info', JSON.stringify(val))
+        }
+        else {
+            try {
+                return JSON.parse(sessionStorage.getItem('user-info')!) as { name: string, email: string }
+            }
+            catch (e) {
+                return null
+            }
+        }
+    }
+
+    // endregion
+
     // region clear (call this function when user clicked 'home' button)
     clear() {
-        // same as 'sessionStorage.clear()'
         sessionStorage.clear()
-        // this.useBaseDir(null)
-        // this.useLogInfo(null)
-        // this.useRemoteInfo(null)
-        // this.useStatusInfo(null)
     }
 
     // endregion

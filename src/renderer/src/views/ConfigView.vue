@@ -156,7 +156,7 @@ const updateIgnore = (type: 'get' | 'set', toast: boolean = true) => {
     }
     else if(type === 'set') {
         ifEditIgnore.value = false
-        useIpcRenderer().send('gitIgnoreSet', ignoreFileStrToSet.value)
+        useIpcRenderer().send('gitIgnoreSet', { fileStr: ignoreFileStrToSet.value })
         useIpcRenderer().once('gitIgnoreSetReply', (e, [ res, msg ]) => {
             if(res) {
                 ignoreInfo.value = ignoreFileStrToSet.value

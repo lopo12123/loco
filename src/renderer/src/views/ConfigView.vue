@@ -38,8 +38,8 @@ const updateAllConfig = () => {
 // region remote
 const remoteInfo = ref<[ string, string ]>(useGitStore().useRemoteInfo())
 const updateRemote = (toast: boolean = true) => {
-    useIpcRenderer().send('gitRemoteGet')
-    useIpcRenderer().once('gitRemoteGetReply', (e, [ res, msg ]) => {
+    useIpcRenderer().send('gitRemote')
+    useIpcRenderer().once('gitRemoteReply', (e, [ res, msg ]) => {
             if(res) {
                 remoteInfo.value = msg
                 useGitStore().useRemoteInfo(msg)

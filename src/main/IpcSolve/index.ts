@@ -184,29 +184,15 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 e.reply('gitPushReply', shakeFn([ false, err ]))
             })
     })
-    ipcMain.on('gitRemoteGet', (e) => {
+    ipcMain.on('gitRemote', (e) => {
         useGit().cmd_remote()
             .then((res) => {
-                e.reply('gitRemoteGetReply', [ true, res ])
+                e.reply('gitRemoteReply', [ true, res ])
             })
             .catch((err) => {
                 if(err instanceof Error) err = err.message
                 else err = JSON.stringify(err)
-                e.reply('gitRemoteGetReply', shakeFn([ false, err ]))
-            })
-    })
-    /**
-     * @deprecated to many conflicts
-     */
-    ipcMain.on('gitRemoteSet', (e, { name, url }) => {
-        useGit().cmd_remote_set(name, url)
-            .then(() => {
-                e.reply('gitRemoteSetReply', [ true, 'success' ])
-            })
-            .catch((err) => {
-                if(err instanceof Error) err = err.message
-                else err = JSON.stringify(err)
-                e.reply('gitRemoteSetReply', shakeFn([ false, err ]))
+                e.reply('gitRemoteReply', shakeFn([ false, err ]))
             })
     })
     ipcMain.on('gitReset', (e, { hash }) => {

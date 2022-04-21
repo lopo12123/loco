@@ -11,8 +11,8 @@ const router = useRouter()
 
 const InfoPair = {
     free: {
-        icon: 'pi pi-bell',
-        text: 'Drop the .git file here.',
+        icon: 'pi pi-book',
+        text: '[Exist] Drop the .git file here.',
         spin: false,
         blink: false
     },
@@ -53,13 +53,19 @@ const solveGitPath = (path: string) => {
 
 <template>
     <div class="starter">
-        <div class="receive-container">
-            <FileReceiver @file-drop="solveGitPath"/>
+        <div class="init-container">
+            <LoadingInfo
+                icon="pi pi-bolt" :spin="false"
+                text="[New] click to init new repository." :blink="false"/>
         </div>
-        <div class="info-container">
+        <div class="receive-container">
+            <div class="cover-layer">
+                <FileReceiver @file-drop="solveGitPath"/>
+            </div>
             <LoadingInfo
                 :icon="infoConfig.icon" :spin="infoConfig.spin"
                 :text="infoConfig.text" :blink="infoConfig.blink"/>
+
         </div>
     </div>
 </template>
@@ -70,16 +76,43 @@ const solveGitPath = (path: string) => {
     width: 100%;
     height: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+
+    %container-base {
+        position: relative;
+        width: calc(100% - 2px);
+        border: dashed 1px #86a5b1;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        &:hover {
+            color: #9feaf9;
+            border-color: #9feaf9;
+        }
+    }
+
+    .init-container {
+        @extend %container-base;
+        height: 38px;
+        user-select: none;
+        cursor: pointer;
+    }
 
     .receive-container {
-        position: absolute;
-        z-index: 10;
-        width: calc(100% - 2px);
-        height: calc(100% - 2px);
-        border: dashed 1px #9feaf9cc;
-        border-radius: 5px;
+        @extend %container-base;
+        height: calc(100% - 52px);
+
+        .cover-layer {
+            position: absolute;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
     }
 }
 </style>

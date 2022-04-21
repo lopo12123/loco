@@ -17,6 +17,7 @@ html, body, #app {
     font-family: 'Menlo', 'Lucida Console', monospace;
     font-size: 14px;
     overflow: hidden;
+    cursor: url("../assets/miku.png"), auto;
 }
 
 img {
@@ -151,4 +152,5 @@ img {
         background-color: #cccccc1a;
     }
 }
+
 // endregion

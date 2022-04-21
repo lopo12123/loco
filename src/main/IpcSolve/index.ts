@@ -162,8 +162,8 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 e.reply('gitLogReply', shakeFn([ false, err ]))
             })
     })
-    ipcMain.on('gitPull', (e) => {
-        useGit().cmd_pull()
+    ipcMain.on('gitPull', (e, { first, remoteName, remoteUrl }) => {
+        useGit().cmd_pull(first, remoteName, remoteUrl)
             .then(() => {
                 e.reply('gitPullReply', [ true, 'success' ])
             })
@@ -173,8 +173,8 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 e.reply('gitPullReply', shakeFn([ false, err ]))
             })
     })
-    ipcMain.on('gitPush', (e) => {
-        useGit().cmd_push()
+    ipcMain.on('gitPush', (e, { first, remoteName, remoteUrl }) => {
+        useGit().cmd_push(first, remoteName, remoteUrl)
             .then(() => {
                 e.reply('gitPushReply', [ true, 'success' ])
             })

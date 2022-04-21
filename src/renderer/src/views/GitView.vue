@@ -191,12 +191,31 @@ const pushOrPullWithRemote = () => {
         const newUrl = remoteUrlToSet.value
         remoteDialogVisible.value = false
 
-        console.log(pushOrPull.value, newName, newUrl)
         if(pushOrPull.value === 'push') {
-            // do push
+            useToastStore().info('pushing, please wait.', '', null)
+            useIpcRenderer().send('gitPush', { first: true, remoteName: newName, remoteUrl: newUrl })
+            useIpcRenderer().once('gitPushReply', (e, [ res, msg ]) => {
+                if(res) {
+                    useToastStore().success('push success')
+                    updateGitInfo()
+                }
+                else {
+                    useToastStore().error(msg)
+                }
+            })
         }
         else {
-            // do pull
+            useToastStore().info('pulling, please wait.', '', null)
+            useIpcRenderer().send('gitPull', { first: true, remoteName: newName, remoteUrl: newUrl })
+            useIpcRenderer().once('gitPullReply', (e, [ res, msg ]) => {
+                if(res) {
+                    useToastStore().success('pull success')
+                    updateGitInfo()
+                }
+                else {
+                    useToastStore().error(msg)
+                }
+            })
         }
     }
 }

@@ -28,7 +28,7 @@ class StoreToast {
         })
     }
 
-    error(msg: string, title?: string, till: number = 3000) {
+    error(msg: string, title?: string, till: number | undefined = undefined) {
         this.#toast?.removeAllGroups()
         this.#toast?.add({
             severity: ToastSeverity.ERROR,

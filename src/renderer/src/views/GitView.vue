@@ -10,12 +10,12 @@ import { useIpcRenderer } from "../stores/store_ipc";
 
 const router = useRouter()
 const baseDir = useGitStore().useBaseDir()
-const remoteInfo = useGitStore().useRemoteInfo()
+const remoteInfo = ref<[ string, string ]>(useGitStore().useRemoteInfo())
 const statusInfoRef = ref(useGitStore().useStatusInfo())
 const selectList = ref<boolean[]>(new Array(statusInfoRef.value?.files?.length ?? 0))
 
 onBeforeMount(() => {
-    if(!baseDir || !remoteInfo || !statusInfoRef.value) {
+    if(!baseDir || !remoteInfo.value || !statusInfoRef.value) {
         useToastStore().warn('No git info available.')
         router.push({
             name: 'Starter'
@@ -82,34 +82,46 @@ const menuItems = [
         label: 'pull',
         icon: 'iconfont icon-jiantou_zuoxia',
         command() {
-            useToastStore().info('pulling, please wait.', '', null)
-            useIpcRenderer().send('gitPull')
-            useIpcRenderer().once('gitPullReply', (e, [ res, msg ]) => {
-                if(res) {
-                    useToastStore().success('pull success')
-                    updateGitInfo()
-                }
-                else {
-                    useToastStore().error(msg)
-                }
-            })
+            if(remoteInfo.value[0] === '') {
+                pushOrPull.value = 'pull'
+                remoteDialogVisible.value = true
+            }
+            else {
+                useToastStore().info('pulling, please wait.', '', null)
+                useIpcRenderer().send('gitPull')
+                useIpcRenderer().once('gitPullReply', (e, [ res, msg ]) => {
+                    if(res) {
+                        useToastStore().success('pull success')
+                        updateGitInfo()
+                    }
+                    else {
+                        useToastStore().error(msg)
+                    }
+                })
+            }
         }
     },
     {
         label: 'push',
         icon: 'iconfont icon-jiantou_youshang',
         command() {
-            useToastStore().info('pushing, please wait.', '', null)
-            useIpcRenderer().send('gitPush')
-            useIpcRenderer().once('gitPushReply', (e, [ res, msg ]) => {
-                if(res) {
-                    useToastStore().success('push success')
-                    updateGitInfo()
-                }
-                else {
-                    useToastStore().error(msg)
-                }
-            })
+            if(remoteInfo.value[0] === '') {
+                pushOrPull.value = 'push'
+                remoteDialogVisible.value = true
+            }
+            else {
+                useToastStore().info('pushing, please wait.', '', null)
+                useIpcRenderer().send('gitPush')
+                useIpcRenderer().once('gitPushReply', (e, [ res, msg ]) => {
+                    if(res) {
+                        useToastStore().success('push success')
+                        updateGitInfo()
+                    }
+                    else {
+                        useToastStore().error(msg)
+                    }
+                })
+            }
         }
     }
 ]
@@ -164,6 +176,31 @@ const doCommit = (type: 'show' | 'confirm') => {
     }
 }
 // endregion
+
+// region remote未定义时的 push/pull
+const pushOrPull = ref<'push' | 'pull'>('push')
+const remoteUrlToSet = ref('')
+const remoteDialogVisible = ref(false)
+const pushOrPullWithRemote = () => {
+    const newUrl = remoteUrlToSet.value
+    if((!newUrl.startsWith('https://') && !newUrl.startsWith('git@')) || (!newUrl.endsWith('.git'))) {
+        useToastStore().warn('invalid url.')
+    }
+    else {
+        const newName = remoteInfo.value[0] === '' ? 'origin' : remoteInfo.value[0]
+        const newUrl = remoteUrlToSet.value
+        remoteDialogVisible.value = false
+
+        console.log(pushOrPull.value, newName, newUrl)
+        if(pushOrPull.value === 'push') {
+            // do push
+        }
+        else {
+            // do pull
+        }
+    }
+}
+// endregion
 </script>
 
 <template>
@@ -183,6 +220,22 @@ const doCommit = (type: 'show' | 'confirm') => {
                 <div class="commit-dialog-footer">
                     <div class="btn" @click="commitDialogVisible = false"><i>取消</i></div>
                     <div class="btn" @click="doCommit('confirm')"><i>确认</i></div>
+                </div>
+            </template>
+        </Dialog>
+
+        <Dialog class="remote-dialog" header="定义远程" v-model:visible="remoteDialogVisible">
+            <div class="remote-dialog-content">
+                <div class="remote-name"><span style="color: #9feaf9">名称: </span><span
+                    class="remote-name-val">{{ remoteInfo[0] === '' ? 'origin' : remoteInfo[0] }}</span></div>
+                <div class="remote-url" style="color: #9feaf9">url:</div>
+                <input class="remote-url-ipt" v-model="remoteUrlToSet"
+                       type="text" placeholder="请输入远程url" spellcheck="false">
+            </div>
+            <template #footer>
+                <div class="remote-dialog-footer">
+                    <div class="btn" @click="remoteDialogVisible = false"><i>取消</i></div>
+                    <div class="btn" @click="pushOrPullWithRemote"><i>确认</i></div>
                 </div>
             </template>
         </Dialog>
@@ -469,6 +522,67 @@ const doCommit = (type: 'show' | 'confirm') => {
     }
 
     .commit-dialog-footer {
+        position: relative;
+        width: 260px;
+        background-color: #2f3241;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        .btn {
+            position: relative;
+            height: 20px;
+            margin: 0 5px;
+            line-height: 20px;
+            cursor: pointer;
+
+            &:hover {
+                color: #9feaf9;
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.remote-dialog {
+    .remote-dialog-content {
+        width: 260px;
+        height: 60px;
+        background-color: #2f3241;
+        font-family: cursive;
+        line-height: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        overflow: hidden;
+
+        .remote-name, .remote-url {
+            height: 20px;
+        }
+
+        .remote-name-val {
+            cursor: not-allowed;
+            text-decoration: underline;
+        }
+
+        .remote-url-ipt {
+            width: 100%;
+            height: 19px;
+            background-color: transparent;
+            border: none;
+            border-bottom: solid 1px #86a5b1;
+            outline: none;
+            color: #86a5b1;
+            font-family: cursive;
+
+            &:focus {
+                border-color: #9feaf9;
+            }
+        }
+    }
+
+    .remote-dialog-footer {
         position: relative;
         width: 260px;
         background-color: #2f3241;

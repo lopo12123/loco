@@ -195,6 +195,9 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 e.reply('gitRemoteGetReply', shakeFn([ false, err ]))
             })
     })
+    /**
+     * @deprecated to many conflicts
+     */
     ipcMain.on('gitRemoteSet', (e, { name, url }) => {
         useGit().cmd_remote_set(name, url)
             .then(() => {

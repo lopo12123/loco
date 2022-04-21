@@ -167,6 +167,9 @@ class Git {
         })
     }
 
+    /**
+     * @deprecated too many conflicts
+     */
     cmd_remote_set(name: string, url: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
@@ -266,16 +269,17 @@ export const useGit = () => _
 //     .catch((err) => {
 //         console.log(err)
 //     })
-_.base('.')
-    .then((self) => {
-        return self.cmd_branch()
-    })
-    .then((branches) => {
-        console.log('branches: ', branches)
-    })
-    .catch((err) => {
-        console.log('err: ', err)
-    })
+
+// _.base('.')
+//     .then((self) => {
+//         return self.cmd_branch()
+//     })
+//     .then((branches) => {
+//         console.log('branches: ', branches)
+//     })
+//     .catch((err) => {
+//         console.log('err: ', err)
+//     })
 
 // _.base('D:\\GitProjects\\pool\\noGit\\123')
 //     .then((self) => {

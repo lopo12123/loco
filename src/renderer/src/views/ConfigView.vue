@@ -186,7 +186,7 @@ const back = () => {
         <Dialog class="remote-dialog" header="定义远程" v-model:visible="remoteDialogVisible">
             <div class="remote-dialog-content">
                 <div class="remote-name"><span style="color: #9feaf9">名称: </span><span
-                    class="remote-name-val">{{ remoteInfo[0] }}</span></div>
+                    class="remote-name-val">{{ remoteInfo[0] === '' ? 'origin' : remoteInfo[0] }}</span></div>
                 <div class="remote-url" style="color: #9feaf9">url:</div>
                 <input class="remote-url-ipt" v-model="remoteUrlToSet"
                        type="text" placeholder="请输入远程url" spellcheck="false">

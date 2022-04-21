@@ -82,13 +82,18 @@ class Git {
         })
     }
 
+    /**
+     * @description 只负责init, 不建立实例与git目录的联系
+     */
     cmd_init(rootDir: string): Promise<InitResult> {
         return new Promise<InitResult>((resolve, reject) => {
             simpleGit().init([ '--initial-branch=master', resolvePath(rootDir) ], (err, res) => {
                 if(err) reject(err)
                 else {
-                    this.#git = simpleGit(rootDir)
-                    resolve(res)
+                    resolve({
+                        ...res,
+                        gitDir: resolvePath(res.gitDir)
+                    })
                 }
             })
         })

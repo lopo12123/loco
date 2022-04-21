@@ -29,6 +29,17 @@ class Git {
         })
     }
 
+    cmd_branch() {
+        return new Promise((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else {
+                this.#git.branch([ '-l', '-v', '-vv' ], (err, res) => {
+                    err ? reject(err) : resolve(res)
+                })
+            }
+        })
+    }
+
     cmd_commit(files: string[], msg: string): Promise<CommitResult> {
         return new Promise<CommitResult>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
@@ -87,12 +98,16 @@ class Git {
      */
     cmd_init(rootDir: string): Promise<InitResult> {
         return new Promise<InitResult>((resolve, reject) => {
-            simpleGit().init([ '--initial-branch=master', resolvePath(rootDir) ], (err, res) => {
-                if(err) reject(err)
+            simpleGit().init([ '--initial-branch=master', resolvePath(rootDir) ], (err_init, res_init) => {
+                if(err_init) reject(err_init)
                 else {
-                    resolve({
-                        ...res,
-                        gitDir: resolvePath(res.gitDir)
+                    simpleGit(resolvePath(rootDir)).commit('system: init repository', [ '--allow-empty' ], (err_cmt, res_cmt) => {
+                        console.log(err_cmt, res_cmt)
+
+                        resolve({
+                            ...res_init,
+                            gitDir: resolvePath(res_init.gitDir)
+                        })
                     })
                 }
             })
@@ -245,13 +260,19 @@ class Git {
 const _ = new Git()
 export const useGit = () => _
 
-// _.cmd_init('D:\\GitProjects\\pool\\noGit')
-//     .then((res) => {
-//         console.log('res: ', res)
-//         return _.cmd_toplevel()
+_.cmd_init('D:\\GitProjects\\pool\\empty')
+    .then((res) => {
+        console.log(res)
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+// _.base('D:\\GitProjects\\pool\\empty')
+//     .then((self) => {
+//         return self.cmd_branch()
 //     })
-//     .then((top) => {
-//         console.log('top: ', top)
+//     .then((branches) => {
+//         console.log('branches: ', branches)
 //     })
 //     .catch((err) => {
 //         console.log('err: ', err)

@@ -64,6 +64,17 @@ class Git {
         })
     }
 
+    /**
+     * @description 只负责clone, 不建立实例与git目录的联系
+     */
+    cmd_clone(repoPath: string, localPath: string, filename: string) {
+        return new Promise((resolve, reject) => {
+            simpleGit().clone(repoPath, resolvePath(localPath, filename), [], (err, res) => {
+                err ? reject(err) : resolve(res)
+            })
+        })
+    }
+
     cmd_commit(files: string[], msg: string): Promise<CommitResult> {
         return new Promise<CommitResult>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
@@ -306,15 +317,13 @@ export const useGit = () => _
 
 // https://gitlab.com/play_mj/loco-test.git
 
-// _.cmd_init('D:\\GitProjects\\pool\\noGit')
+// _.cmd_clone(
+//         'https://gitlab.com/lopo12123/test-simple-git.git',
+//         'D:\\GitProjects\\pool\\noGit',
+//         'newrepo'
+//     )
 //     .then((res) => {
-//         return _.base('D:\\GitProjects\\pool\\noGit')
-//     })
-//     .then((self) => {
-//         return self.cmd_commit(['123.txt'], 'test: add 123.txt')
-//     })
-//     .then((res) => {
-//         console.log('res', res)
+//         console.log('res: ', res)
 //     })
 //     .catch((err) => {
 //         console.log('err', err)

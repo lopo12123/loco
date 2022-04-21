@@ -13,6 +13,30 @@ import { readFileSync, writeFileSync } from "fs";
 class Git {
     #git: SimpleGit | null = null
 
+    private cmd_remote_set(name: string, url: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else {
+                this.#git
+                    .remote([])
+                    .then((remoteNames) => {
+                        if(!remoteNames || !remoteNames.includes(name)) {
+                            return this.#git!.remote([ 'add', name, url ])
+                        }
+                        else {
+                            return this.#git!.remote([ 'set-url', name, url ])
+                        }
+                    })
+                    .then(() => {
+                        resolve()
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    })
+            }
+        })
+    }
+
     base(path: string): Promise<Git> {
         path = resolvePath(path)
         if(path.endsWith('.git')) path = joinPath(path, '..')
@@ -121,7 +145,7 @@ class Git {
         })
     }
 
-    cmd_pull(first: boolean = false, name?: string, url?: string): Promise<void> {
+    cmd_pull(first: boolean = false, name?: string, url?: string, branch: string = 'master'): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
             else {
@@ -129,7 +153,7 @@ class Git {
                     if(name === undefined || url === undefined) reject('required args remote-name or remote-url has not found.')
                     else this.cmd_remote_set(name, url)
                         .then(() => {
-                            return this.#git!.pull(name, 'master')
+                            return this.#git!.pull(name, branch)
                         })
                         .then(() => {
                             return this.cmd_upstream(name)
@@ -150,12 +174,29 @@ class Git {
         })
     }
 
-    cmd_push(first: boolean, name?: string, url?: string): Promise<PushResult> {
+    cmd_push(first: boolean = false, name?: string, url?: string, branch: string = 'master'): Promise<PushResult> {
         return new Promise<PushResult>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
-            else this.#git.push((err, res) => {
-                err ? reject(err) : resolve(res)
-            })
+            else {
+                if(first) {
+                    if(name === undefined || url === undefined) reject('required args remote-name or remote-url has not found.')
+                    else this.cmd_remote_set(name, url)
+                        .then(() => {
+                            return this.#git!.push(name, branch, [ '-u' ])
+                        })
+                        .then((pushRes) => {
+                            resolve(pushRes)
+                        })
+                        .catch((err) => {
+                            reject(err)
+                        })
+                }
+                else {
+                    this.#git.push((err, res) => {
+                        err ? reject(err) : resolve(res)
+                    })
+                }
+            }
         })
     }
 
@@ -178,30 +219,6 @@ class Git {
                     .then((remoteUrl) => {
                         if(!remoteUrl) resolve([ remoteName, '' ])
                         else resolve([ remoteName, remoteUrl.replace(/[\n ]/g, '') ])
-                    })
-                    .catch((err) => {
-                        reject(err)
-                    })
-            }
-        })
-    }
-
-    private cmd_remote_set(name: string, url: string): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            if(!this.#git) reject('Git has not been initialized.')
-            else {
-                this.#git
-                    .remote([])
-                    .then((remoteNames) => {
-                        if(!remoteNames || !remoteNames.includes(name)) {
-                            return this.#git!.remote([ 'add', name, url ])
-                        }
-                        else {
-                            return this.#git!.remote([ 'set-url', name, url ])
-                        }
-                    })
-                    .then(() => {
-                        resolve()
                     })
                     .catch((err) => {
                         reject(err)
@@ -237,8 +254,8 @@ class Git {
         })
     }
 
-    cmd_upstream(remote: string = 'origin', branch: string = 'master') {
-        return new Promise((resolve, reject) => {
+    cmd_upstream(remote: string = 'origin', branch: string = 'master'): Promise<BranchSummary> {
+        return new Promise<BranchSummary>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
             else this.#git.branch([ `--set-upstream-to=${ remote }/${ branch }` ], (err, res) => {
                 err ? reject(err) : resolve(res)
@@ -314,16 +331,16 @@ export const useGit = () => _
 //         console.log('err: ', err)
 //     })
 
-_.base('D:\\GitProjects\\pool\\noGit')
-    .then((self) => {
-        return self.cmd_pull(true, 'origin', 'https://gitlab.com/play_mj/loco-test.git')
-    })
-    .then(() => {
-        console.log('pull done')
-    })
-    .catch((err) => {
-        console.log('err: ', err)
-    })
+// _.base('D:\\GitProjects\\pool\\noGit')
+//     .then((self) => {
+//         return self.cmd_push(true, 'origin', 'https://gitlab.com/play_mj/loco-test.git', 'test1')
+//     })
+//     .then((res) => {
+//         console.log('push done: ', res)
+//     })
+//     .catch((err) => {
+//         console.log('err: ', err)
+//     })
 
 // _.base('D:\\GitProjects\\pool\\noGit\\123')
 //     .then((self) => {

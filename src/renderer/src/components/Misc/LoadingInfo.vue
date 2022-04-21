@@ -29,7 +29,7 @@ const props = withDefaults(defineProps<{
 .loading-info {
     position: relative;
     min-width: 100px;
-    max-width: 300px;
+    max-width: 400px;
     width: fit-content;
     height: 30px;
     line-height: 18px;

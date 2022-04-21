@@ -153,7 +153,7 @@ class Git {
                     if(name === undefined || url === undefined) reject('required args remote-name or remote-url has not found.')
                     else this.cmd_remote_set(name, url)
                         .then(() => {
-                            return this.#git!.pull(name, branch)
+                            return this.#git!.pull(name, branch, [ '--allow-unrelated-histories' ])
                         })
                         .then(() => {
                             return this.cmd_upstream(name)

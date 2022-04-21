@@ -102,8 +102,6 @@ class Git {
                 if(err_init) reject(err_init)
                 else {
                     simpleGit(resolvePath(rootDir)).commit('system: init repository', [ '--allow-empty' ], (err_cmt, res_cmt) => {
-                        console.log(err_cmt, res_cmt)
-
                         resolve({
                             ...res_init,
                             gitDir: resolvePath(res_init.gitDir)

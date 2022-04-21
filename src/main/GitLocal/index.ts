@@ -122,7 +122,7 @@ class Git {
         })
     }
 
-    cmd_pull(): Promise<PullResult> {
+    cmd_pull(first: boolean, name?: string, url?: string): Promise<PullResult> {
         return new Promise<PullResult>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
             else this.#git.pull((err, res) => {
@@ -131,7 +131,7 @@ class Git {
         })
     }
 
-    cmd_push(): Promise<PushResult> {
+    cmd_push(first: boolean, name?: string, url?: string): Promise<PushResult> {
         return new Promise<PushResult>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
             else this.#git.push((err, res) => {

@@ -240,17 +240,17 @@ class Git {
 const _ = new Git()
 export const useGit = () => _
 
-_.cmd_init('D:\\GitProjects\\pool\\noGit')
-    .then((res) => {
-        console.log(res)
-        return _.cmd_toplevel()
-    })
-    .then((top) => {
-        console.log('top: ', top)
-    })
-    .catch((err) => {
-        console.log(err)
-    })
+// _.cmd_init('D:\\GitProjects\\pool\\noGit')
+//     .then((res) => {
+//         console.log('res: ', res)
+//         return _.cmd_toplevel()
+//     })
+//     .then((top) => {
+//         console.log('top: ', top)
+//     })
+//     .catch((err) => {
+//         console.log('err: ', err)
+//     })
 
 // _.base('D:\\GitProjects\\pool\\noGit\\123')
 //     .then((self) => {

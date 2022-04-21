@@ -1,4 +1,5 @@
 import simpleGit, {
+    BranchSummary,
     CommitResult,
     InitResult,
     LogResult,
@@ -29,8 +30,8 @@ class Git {
         })
     }
 
-    cmd_branch() {
-        return new Promise((resolve, reject) => {
+    cmd_branch(): Promise<BranchSummary> {
+        return new Promise<BranchSummary>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
             else {
                 this.#git.branch([ '-l', '-v', '-vv' ], (err, res) => {
@@ -101,7 +102,7 @@ class Git {
             simpleGit().init([ '--initial-branch=master', resolvePath(rootDir) ], (err_init, res_init) => {
                 if(err_init) reject(err_init)
                 else {
-                    simpleGit(resolvePath(rootDir)).commit('system: init repository', [ '--allow-empty' ], (err_cmt, res_cmt) => {
+                    simpleGit(resolvePath(rootDir)).commit('system: init repository', [ '--allow-empty' ], () => {
                         resolve({
                             ...res_init,
                             gitDir: resolvePath(res_init.gitDir)
@@ -258,23 +259,23 @@ class Git {
 const _ = new Git()
 export const useGit = () => _
 
-_.cmd_init('D:\\GitProjects\\pool\\empty')
-    .then((res) => {
-        console.log(res)
-    })
-    .catch((err) => {
-        console.log(err)
-    })
-// _.base('D:\\GitProjects\\pool\\empty')
-//     .then((self) => {
-//         return self.cmd_branch()
-//     })
-//     .then((branches) => {
-//         console.log('branches: ', branches)
+// _.cmd_init('D:\\GitProjects\\pool\\empty')
+//     .then((res) => {
+//         console.log(res)
 //     })
 //     .catch((err) => {
-//         console.log('err: ', err)
+//         console.log(err)
 //     })
+_.base('.')
+    .then((self) => {
+        return self.cmd_branch()
+    })
+    .then((branches) => {
+        console.log('branches: ', branches)
+    })
+    .catch((err) => {
+        console.log('err: ', err)
+    })
 
 // _.base('D:\\GitProjects\\pool\\noGit\\123')
 //     .then((self) => {

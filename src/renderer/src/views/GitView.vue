@@ -82,7 +82,7 @@ const menuItems = [
         label: 'pull',
         icon: 'iconfont icon-jiantou_zuoxia',
         command() {
-            useToastStore().info('pulling, please wait.')
+            useToastStore().info('pulling, please wait.', '', null)
             useIpcRenderer().send('gitPull')
             useIpcRenderer().once('gitPullReply', (e, [ res, msg ]) => {
                 if(res) {
@@ -99,7 +99,7 @@ const menuItems = [
         label: 'push',
         icon: 'iconfont icon-jiantou_youshang',
         command() {
-            useToastStore().info('pushing, please wait.')
+            useToastStore().info('pushing, please wait.', '', null)
             useIpcRenderer().send('gitPush')
             useIpcRenderer().once('gitPushReply', (e, [ res, msg ]) => {
                 if(res) {

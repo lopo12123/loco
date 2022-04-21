@@ -84,7 +84,7 @@ class Git {
 
     cmd_init(rootDir: string): Promise<InitResult> {
         return new Promise<InitResult>((resolve, reject) => {
-            simpleGit().init([ '--initial-branch=master', rootDir ], (err, res) => {
+            simpleGit().init([ '--initial-branch=master', resolvePath(rootDir) ], (err, res) => {
                 if(err) reject(err)
                 else {
                     this.#git = simpleGit(rootDir)

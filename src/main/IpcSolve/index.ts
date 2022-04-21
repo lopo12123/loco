@@ -77,6 +77,17 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 e.reply('gitBaseReply', shakeFn([ false, err ]))
             })
     })
+    ipcMain.on('gitClone', (e, { repoPath, localPath, filename }) => {
+        useGit().cmd_clone(repoPath, localPath, filename)
+            .then(() => {
+                e.reply('gitCloneReply', [ true, 'success' ])
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitCommitReply', shakeFn([ false, err ]))
+            })
+    })
     ipcMain.on('gitCommit', (e, { files, message }) => {
         useGit().cmd_commit(files, message)
             .then((res) => {

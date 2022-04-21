@@ -3,7 +3,6 @@ import simpleGit, {
     CommitResult,
     InitResult,
     LogResult,
-    PullResult,
     PushResult,
     SimpleGit,
     StatusResult
@@ -122,12 +121,32 @@ class Git {
         })
     }
 
-    cmd_pull(first: boolean, name?: string, url?: string): Promise<PullResult> {
-        return new Promise<PullResult>((resolve, reject) => {
+    cmd_pull(first: boolean = false, name?: string, url?: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
-            else this.#git.pull((err, res) => {
-                err ? reject(err) : resolve(res)
-            })
+            else {
+                if(first) {
+                    if(name === undefined || url === undefined) reject('required args remote-name or remote-url has not found.')
+                    else this.cmd_remote_set(name, url)
+                        .then(() => {
+                            return this.#git!.pull(name, 'master')
+                        })
+                        .then(() => {
+                            return this.cmd_upstream(name)
+                        })
+                        .then(() => {
+                            resolve()
+                        })
+                        .catch((err) => {
+                            reject(err)
+                        })
+                }
+                else {
+                    this.#git.pull((err) => {
+                        err ? reject(err) : resolve()
+                    })
+                }
+            }
         })
     }
 
@@ -167,6 +186,30 @@ class Git {
         })
     }
 
+    private cmd_remote_set(name: string, url: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else {
+                this.#git
+                    .remote([])
+                    .then((remoteNames) => {
+                        if(!remoteNames || !remoteNames.includes(name)) {
+                            return this.#git!.remote([ 'add', name, url ])
+                        }
+                        else {
+                            return this.#git!.remote([ 'set-url', name, url ])
+                        }
+                    })
+                    .then(() => {
+                        resolve()
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    })
+            }
+        })
+    }
+
     cmd_reset(hash: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')
@@ -190,6 +233,15 @@ class Git {
             if(!this.#git) reject('Git has not been initialized.')
             else this.#git.revparse([ '--show-toplevel' ], (err, data) => {
                 err ? reject(err) : resolve(data.replace(/[\n]/g, ''))
+            })
+        })
+    }
+
+    cmd_upstream(remote: string = 'origin', branch: string = 'master') {
+        return new Promise((resolve, reject) => {
+            if(!this.#git) reject('Git has not been initialized.')
+            else this.#git.branch([ `--set-upstream-to=${ remote }/${ branch }` ], (err, res) => {
+                err ? reject(err) : resolve(res)
             })
         })
     }
@@ -235,24 +287,43 @@ class Git {
 const _ = new Git()
 export const useGit = () => _
 
-// _.cmd_init('D:\\GitProjects\\pool\\empty')
+// https://gitlab.com/play_mj/loco-test.git
+
+// _.cmd_init('D:\\GitProjects\\pool\\noGit')
 //     .then((res) => {
-//         console.log(res)
+//         return _.base('D:\\GitProjects\\pool\\noGit')
+//     })
+//     .then((self) => {
+//         return self.cmd_commit(['123.txt'], 'test: add 123.txt')
+//     })
+//     .then((res) => {
+//         console.log('res', res)
 //     })
 //     .catch((err) => {
-//         console.log(err)
+//         console.log('err', err)
 //     })
 
-// _.base('.')
+// _.base('D:\\GitProjects\\pool\\noGit')
 //     .then((self) => {
-//         return self.cmd_branch()
+//         return self.cmd_upstream('origin', 'master')
 //     })
-//     .then((branches) => {
-//         console.log('branches: ', branches)
+//     .then((res) => {
+//         console.log('res: ', res)
 //     })
 //     .catch((err) => {
 //         console.log('err: ', err)
 //     })
+
+_.base('D:\\GitProjects\\pool\\noGit')
+    .then((self) => {
+        return self.cmd_pull(true, 'origin', 'https://gitlab.com/play_mj/loco-test.git')
+    })
+    .then(() => {
+        console.log('pull done')
+    })
+    .catch((err) => {
+        console.log('err: ', err)
+    })
 
 // _.base('D:\\GitProjects\\pool\\noGit\\123')
 //     .then((self) => {

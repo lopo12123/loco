@@ -12,13 +12,15 @@ const router = useRouter()
 const InfoPair = {
     free: {
         icon: 'pi pi-bell',
-        text: 'Drop the .git file here to start.',
-        spin: false
+        text: 'Drop the .git file here.',
+        spin: false,
+        blink: false
     },
     block: {
         icon: 'pi pi-sync',
         text: 'Waiting for parsing',
-        spin: true
+        spin: true,
+        blink: true
     }
 }
 const infoConfig = ref(InfoPair.free)
@@ -57,7 +59,7 @@ const solveGitPath = (path: string) => {
         <div class="info-container">
             <LoadingInfo
                 :icon="infoConfig.icon" :spin="infoConfig.spin"
-                :text="infoConfig.text"/>
+                :text="infoConfig.text" :blink="infoConfig.blink"/>
         </div>
     </div>
 </template>

@@ -67,10 +67,10 @@ class Git {
     /**
      * @description 只负责clone, 不建立实例与git目录的联系
      */
-    cmd_clone(repoPath: string, localPath: string, filename: string) {
-        return new Promise((resolve, reject) => {
-            simpleGit().clone(repoPath, resolvePath(localPath, filename), [], (err, res) => {
-                err ? reject(err) : resolve(res)
+    cmd_clone(repoPath: string, localPath: string, filename: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            simpleGit().clone(repoPath, resolvePath(localPath, filename), [], (err) => {
+                err ? reject(err) : resolve()
             })
         })
     }

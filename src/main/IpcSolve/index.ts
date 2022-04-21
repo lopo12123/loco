@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import { exec } from "child_process";
 import { join as joinPath, resolve as resolvePath } from "path";
 import { useGit } from "../GitLocal";
@@ -130,15 +130,25 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 e.reply('gitIgnoreSetReply', shakeFn([ false, err ]))
             })
     })
-    ipcMain.on('gitInit', (e, { rootDir }) => {
-        useGit().cmd_init(rootDir)
+    ipcMain.on('gitInitDialog', (e) => {
+        dialog
+            .showOpenDialog({
+                title: '选择git初始化位置',
+                buttonLabel: '确认',
+                properties: [ 'openDirectory' ]
+            })
             .then((res) => {
-                e.reply('gitInitReply', shakeFn([ true, res ]))
+                if(res.canceled || res.filePaths.length === 0) e.reply('gitInitDialogReply', [ true, 'cancel' ])
+                else useGit()
+                    .cmd_init(res.filePaths[0])
+                    .then((res) => {
+                        e.reply('gitInitDialogReply', shakeFn([ true, res ]))
+                    })
             })
             .catch((err) => {
                 if(err instanceof Error) err = err.message
                 else err = JSON.stringify(err)
-                e.reply('gitInitReply', shakeFn([ false, err ]))
+                e.reply('gitLogReply', shakeFn([ false, err ]))
             })
     })
     ipcMain.on('gitLog', (e) => {

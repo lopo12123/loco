@@ -30,20 +30,16 @@ const openInNotepad = () => {
  * @description 重新获取所有信息
  */
 const updateAllConfig = () => {
-    updateRemote('get', false)
+    updateRemote(false)
     updateUser('get', '', false)
     updateIgnore('get', false)
 }
 
 // region remote
 const remoteInfo = ref<[ string, string ]>(useGitStore().useRemoteInfo())
-const remoteUrlToSet = ref('')
-const remoteOperateType = ref<'add' | 'set-url'>('add')
-const remoteDialogVisible = ref(false)
-const updateRemote = (type: 'get' | 'set', toast: boolean = true) => {
-    if(type === 'get') {
-        useIpcRenderer().send('gitRemoteGet')
-        useIpcRenderer().once('gitRemoteGetReply', (e, [ res, msg ]) => {
+const updateRemote = (toast: boolean = true) => {
+    useIpcRenderer().send('gitRemoteGet')
+    useIpcRenderer().once('gitRemoteGetReply', (e, [ res, msg ]) => {
             if(res) {
                 remoteInfo.value = msg
                 useGitStore().useRemoteInfo(msg)
@@ -53,30 +49,6 @@ const updateRemote = (type: 'get' | 'set', toast: boolean = true) => {
                 useToastStore().error(msg)
             }
         })
-    }
-    else if(type === 'set') {
-        const newUrl = remoteUrlToSet.value
-        if((!newUrl.startsWith('https://') && !newUrl.startsWith('git@')) || (!newUrl.endsWith('.git'))) {
-            useToastStore().warn('invalid url.')
-        }
-        else {
-            const newName = remoteInfo.value[0] === '' ? 'origin' : remoteInfo.value[0]
-            const newUrl = remoteUrlToSet.value
-            remoteDialogVisible.value = false
-
-            useIpcRenderer().send('gitRemoteSet', { name: newName, url: newUrl })
-            useIpcRenderer().once('gitRemoteSetReply', (e, [ res, msg ]) => {
-                if(res) {
-                    remoteInfo.value = [ newName, newUrl ]
-                    useGitStore().useRemoteInfo([ newName, newUrl ])
-                    useToastStore().success('remote config updated')
-                }
-                else {
-                    useToastStore().error(msg)
-                }
-            })
-        }
-    }
 }
 // endregion
 
@@ -183,22 +155,6 @@ const back = () => {
 
 <template>
     <div class="config-view">
-        <Dialog class="remote-dialog" header="定义远程" v-model:visible="remoteDialogVisible">
-            <div class="remote-dialog-content">
-                <div class="remote-name"><span style="color: #9feaf9">名称: </span><span
-                    class="remote-name-val">{{ remoteInfo[0] === '' ? 'origin' : remoteInfo[0] }}</span></div>
-                <div class="remote-url" style="color: #9feaf9">url:</div>
-                <input class="remote-url-ipt" v-model="remoteUrlToSet"
-                       type="text" placeholder="请输入远程url" spellcheck="false">
-            </div>
-            <template #footer>
-                <div class="remote-dialog-footer">
-                    <div class="btn" @click="remoteDialogVisible = false"><i>取消</i></div>
-                    <div class="btn" @click="updateRemote('set')"><i>确认</i></div>
-                </div>
-            </template>
-        </Dialog>
-
         <Dialog class="ignore-dialog" header="ignore规则/示例" v-model:visible="ignoreDialogVisible">
             <div class="ignore-dialog-content">
                 <span style="color: khaki">规则:</span>
@@ -232,16 +188,13 @@ const back = () => {
                 <div class="line1">
                     <span style="color: khaki;">远程(remote)</span>
                     <i class="iconfont icon-shuaxin btn-like"
-                       title="重新获取远程信息" @click="updateRemote('get')"/>
+                       title="重新获取远程信息" @click="updateRemote"/>
                 </div>
                 <div class="line2">
-                    <span v-if="remoteInfo && remoteInfo[0] !== '' && remoteInfo[1] !== ''"
-                          class="editable" title="点击编辑"
-                          @click="remoteOperateType = 'set-url'; remoteUrlToSet = remoteInfo[1]; remoteDialogVisible = true">
+                    <span v-if="remoteInfo && remoteInfo[0] !== '' && remoteInfo[1] !== ''">
                         {{ remoteInfo[0] + '/' + remoteInfo[1] }}
                     </span>
-                    <span v-else class="editable" title="点击添加"
-                          @click="remoteOperateType = 'add'; remoteDialogVisible = true">
+                    <span v-else>
                         远程未定义
                     </span>
                 </div>

@@ -119,15 +119,26 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 e.reply('gitIgnoreGetReply', shakeFn([ false, err ]))
             })
     })
-    ipcMain.on('gitIgnoreSet', (e, fileStr) => {
+    ipcMain.on('gitIgnoreSet', (e, { fileStr }) => {
         useGit().cmd_ignore_set(fileStr)
             .then(() => {
-                e.reply('gitIgnoreSetReply', [true, 'success'])
+                e.reply('gitIgnoreSetReply', [ true, 'success' ])
             })
             .catch((err) => {
                 if(err instanceof Error) err = err.message
                 else err = JSON.stringify(err)
                 e.reply('gitIgnoreSetReply', shakeFn([ false, err ]))
+            })
+    })
+    ipcMain.on('gitInit', (e, { rootDir }) => {
+        useGit().cmd_init(rootDir)
+            .then((res) => {
+                e.reply('gitInitReply', shakeFn([ true, res ]))
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitInitReply', shakeFn([ false, err ]))
             })
     })
     ipcMain.on('gitLog', (e) => {
@@ -144,7 +155,7 @@ const setIpc = (winRef: BrowserWindow | null) => {
     ipcMain.on('gitPull', (e) => {
         useGit().cmd_pull()
             .then(() => {
-                e.reply('gitPullReply', [true, 'success'])
+                e.reply('gitPullReply', [ true, 'success' ])
             })
             .catch((err) => {
                 if(err instanceof Error) err = err.message
@@ -155,7 +166,7 @@ const setIpc = (winRef: BrowserWindow | null) => {
     ipcMain.on('gitPush', (e) => {
         useGit().cmd_push()
             .then(() => {
-                e.reply('gitPushReply', [true, 'success'])
+                e.reply('gitPushReply', [ true, 'success' ])
             })
             .catch((err) => {
                 if(err instanceof Error) err = err.message

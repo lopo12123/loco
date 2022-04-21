@@ -25,7 +25,23 @@ const InfoPair = {
 }
 const infoConfig = ref(InfoPair.free)
 
-const solveGitPath = (path: string) => {
+const gitCreate = () => {
+    useIpcRenderer().send('gitInitDialog')
+    useIpcRenderer().once('gitInitDialogReply', (e, [ res, msg ]) => {
+        console.log(res, msg)
+        if(res) {
+            if(msg === 'cancel') useToastStore().info('think twice before you press your mouse, fool!')
+            else {
+                useToastStore().success('git init success')
+                gitExist(msg.gitDir)
+            }
+        }
+        else {
+            useToastStore().error(msg)
+        }
+    })
+}
+const gitExist = (path: string) => {
     if(!path.endsWith('.git')) {
         useToastStore().warn('Only .git files are accepted.')
         return
@@ -53,14 +69,14 @@ const solveGitPath = (path: string) => {
 
 <template>
     <div class="starter">
-        <div class="init-container">
+        <div class="create-container" @click="gitCreate">
             <LoadingInfo
                 icon="pi pi-bolt" :spin="false"
                 text="[New] click to init new repository." :blink="false"/>
         </div>
         <div class="receive-container">
             <div class="cover-layer">
-                <FileReceiver @file-drop="solveGitPath"/>
+                <FileReceiver @file-drop="gitExist"/>
             </div>
             <LoadingInfo
                 :icon="infoConfig.icon" :spin="infoConfig.spin"
@@ -88,13 +104,14 @@ const solveGitPath = (path: string) => {
         display: flex;
         align-items: center;
         justify-content: center;
+
         &:hover {
             color: #9feaf9;
             border-color: #9feaf9;
         }
     }
 
-    .init-container {
+    .create-container {
         @extend %container-base;
         height: 38px;
         user-select: none;

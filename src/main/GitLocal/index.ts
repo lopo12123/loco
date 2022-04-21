@@ -167,33 +167,6 @@ class Git {
         })
     }
 
-    /**
-     * @deprecated too many conflicts
-     */
-    cmd_remote_set(name: string, url: string): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            if(!this.#git) reject('Git has not been initialized.')
-            else {
-                this.#git
-                    .remote([])
-                    .then((remoteNames) => {
-                        if(!remoteNames || !remoteNames.includes(name)) {
-                            return this.#git!.remote([ 'add', name, url ])
-                        }
-                        else {
-                            return this.#git!.remote([ 'set-url', name, url ])
-                        }
-                    })
-                    .then(() => {
-                        resolve()
-                    })
-                    .catch((err) => {
-                        reject(err)
-                    })
-            }
-        })
-    }
-
     cmd_reset(hash: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             if(!this.#git) reject('Git has not been initialized.')

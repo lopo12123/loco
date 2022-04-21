@@ -1,4 +1,12 @@
-import simpleGit, { CommitResult, LogResult, PullResult, PushResult, SimpleGit, StatusResult } from "simple-git";
+import simpleGit, {
+    CommitResult,
+    InitResult,
+    LogResult,
+    PullResult,
+    PushResult,
+    SimpleGit,
+    StatusResult
+} from "simple-git";
 import { join as joinPath, resolve as resolvePath } from "path";
 import { readFileSync, writeFileSync } from "fs";
 
@@ -71,6 +79,18 @@ class Git {
                         reject(err)
                     })
             }
+        })
+    }
+
+    cmd_init(rootDir: string): Promise<InitResult> {
+        return new Promise<InitResult>((resolve, reject) => {
+            simpleGit().init([ '--initial-branch=master', rootDir ], (err, res) => {
+                if(err) reject(err)
+                else {
+                    this.#git = simpleGit(rootDir)
+                    resolve(res)
+                }
+            })
         })
     }
 
@@ -220,16 +240,17 @@ class Git {
 const _ = new Git()
 export const useGit = () => _
 
-// _.base('D:\\GitProjects\\pool\\loco-test')
-//     .then((self) => {
-//         return self.cmd_push()
-//     })
-//     .then((res) => {
-//         console.log(res)
-//     })
-//     .catch((err) => {
-//         console.log(err)
-//     })
+_.cmd_init('D:\\GitProjects\\pool\\noGit')
+    .then((res) => {
+        console.log(res)
+        return _.cmd_toplevel()
+    })
+    .then((top) => {
+        console.log('top: ', top)
+    })
+    .catch((err) => {
+        console.log(err)
+    })
 
 // _.base('D:\\GitProjects\\pool\\noGit\\123')
 //     .then((self) => {

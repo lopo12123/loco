@@ -12,7 +12,7 @@ const router = useRouter()
 const InfoPair = {
     free: {
         icon: 'pi pi-book',
-        text: '[Exist] Drop the .git file here.',
+        text: '[Local] Drop the .git file here.',
         spin: false,
         blink: false
     },
@@ -69,11 +69,34 @@ const gitExist = (path: string) => {
 
 <template>
     <div class="starter">
+<!--        <Dialog class="remote-dialog" header="定义远程" v-model:visible="remoteDialogVisible">-->
+<!--            <div class="remote-dialog-content">-->
+<!--                <div class="remote-name"><span style="color: #9feaf9">名称: </span><span-->
+<!--                    class="remote-name-val">{{ remoteInfo[0] === '' ? 'origin' : remoteInfo[0] }}</span></div>-->
+<!--                <div class="remote-url" style="color: #9feaf9">url:</div>-->
+<!--                <input class="remote-url-ipt" v-model="remoteUrlToSet"-->
+<!--                       type="text" placeholder="请输入远程url" spellcheck="false">-->
+<!--            </div>-->
+<!--            <template #footer>-->
+<!--                <div class="remote-dialog-footer">-->
+<!--                    <div class="btn" @click="remoteDialogVisible = false"><i>取消</i></div>-->
+<!--                    <div class="btn" @click="pushOrPullWithRemote"><i>确认</i></div>-->
+<!--                </div>-->
+<!--            </template>-->
+<!--        </Dialog>-->
+
         <div class="create-container" @click="gitCreate">
             <LoadingInfo
                 icon="pi pi-bolt" :spin="false"
                 text="[New] click to init new repository." :blink="false"/>
         </div>
+
+        <div class="clone-container">
+            <LoadingInfo
+                icon="pi pi-cloud-download" :spin="false"
+                text="[Remote] click to pull remote repository." :blink="false"/>
+        </div>
+
         <div class="receive-container">
             <div class="cover-layer">
                 <FileReceiver @file-drop="gitExist"/>
@@ -81,7 +104,6 @@ const gitExist = (path: string) => {
             <LoadingInfo
                 :icon="infoConfig.icon" :spin="infoConfig.spin"
                 :text="infoConfig.text" :blink="infoConfig.blink"/>
-
         </div>
     </div>
 </template>
@@ -118,9 +140,16 @@ const gitExist = (path: string) => {
         cursor: pointer;
     }
 
+    .clone-container {
+        @extend %container-base;
+        height: 38px;
+        user-select: none;
+        cursor: pointer;
+    }
+
     .receive-container {
         @extend %container-base;
-        height: calc(100% - 52px);
+        height: calc(100% - 102px);
 
         .cover-layer {
             position: absolute;

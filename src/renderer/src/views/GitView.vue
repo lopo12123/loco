@@ -88,7 +88,7 @@ const menuItems = [
             }
             else {
                 useToastStore().info('pulling, please wait.', '', null)
-                useIpcRenderer().send('gitPull')
+                useIpcRenderer().send('gitPull', { first: false })
                 useIpcRenderer().once('gitPullReply', (e, [ res, msg ]) => {
                     if(res) {
                         useToastStore().success('pull success')
@@ -111,7 +111,7 @@ const menuItems = [
             }
             else {
                 useToastStore().info('pushing, please wait.', '', null)
-                useIpcRenderer().send('gitPush')
+                useIpcRenderer().send('gitPush', { first: false })
                 useIpcRenderer().once('gitPushReply', (e, [ res, msg ]) => {
                     if(res) {
                         useToastStore().success('push success')

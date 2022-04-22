@@ -78,7 +78,7 @@ class Git {
 
         return new Promise<string>((resolve, reject) => {
             simpleGit().clone(repoPath, resolvePath(localPath, filename), [], (err) => {
-                err ? reject(err) : resolve(resolvePath(localPath, filename))
+                err ? reject(err) : resolve(resolvePath(localPath, filename, './.git'))
             })
         })
     }

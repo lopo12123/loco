@@ -59,7 +59,7 @@ else {
                      text="This seems to be your first use, detecting git`s availability."/>
         <div class="box-with-link" v-if="detectStage === 'unavailable'">
             <LoadingInfo :spin="false" icon="pi pi-exclamation-triangle"
-                         :blink="false" text="git is not available."/>
+                         :blink="false" text="git is not available locally."/>
             <span class="link" @click="downloadGit">
                 <i class="pi pi-link"/>click me to download git in your browser.
             </span>
@@ -90,6 +90,7 @@ else {
             color: #9feaf9;
             cursor: pointer;
             user-select: none;
+            text-decoration: underline;
         }
     }
 }

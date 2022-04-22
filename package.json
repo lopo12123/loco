@@ -2,7 +2,7 @@
     "name": "loco",
     "private": true,
     "version": "0.0.1-dev",
-    "description": "An Electron application with Vue and TypeScript",
+    "description": "Simple desktop git app",
     "main": "./out/main/index.js",
     "author": "lopo",
     "license": "MIT",

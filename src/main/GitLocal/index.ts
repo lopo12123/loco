@@ -10,6 +10,12 @@ import simpleGit, {
 import { join as joinPath, resolve as resolvePath } from "path";
 import { readFileSync, writeFileSync } from "fs";
 
+const getDateInNumber = (): string => {
+    const date = new Date()
+    const [ Y, M, D, h, m, s ] = [ date.getFullYear() + '', date.getMonth() + '', date.getDate() + '', date.getHours() + '', date.getHours() + '', date.getSeconds() + '' ]
+    return Y + M.padStart(2, '0') + D.padStart(2, '0') + h.padStart(2, '0') + m.padStart(2, '0') + s.padStart(2, '0')
+}
+
 class Git {
     #git: SimpleGit | null = null
 
@@ -67,7 +73,9 @@ class Git {
     /**
      * @description 只负责clone, 不建立实例与git目录的联系
      */
-    cmd_clone(repoPath: string, localPath: string, filename: string): Promise<void> {
+    cmd_clone(repoPath: string, localPath: string): Promise<void> {
+        const filename = '新建文件夹_' + getDateInNumber()
+
         return new Promise<void>((resolve, reject) => {
             simpleGit().clone(repoPath, resolvePath(localPath, filename), [], (err) => {
                 err ? reject(err) : resolve()

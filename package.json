@@ -9,8 +9,8 @@
     "scripts": {
         "start": "electron-vite preview",
         "dev:loco": "electron-vite dev",
-        "build:web": "tsc --noEmit && electron-vite build",
-        "build:win": "yarn run build build && electron-builder --win --config",
+        "build": "tsc --noEmit && electron-vite build",
+        "build:win": "yarn run build && electron-builder --win --config",
         "build:mac": "yarn run build && electron-builder --mac --config",
         "build:linux": "yarn run build && electron-builder --linux --config"
     },

@@ -1,4 +1,4 @@
-appId: com.electron.app
+appId: com.lopo.loco
 productName: loco
 directories:
   buildResources: build
@@ -9,7 +9,7 @@ files:
   - '!**/{.eslintignore,.eslintrc.js,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
 asarUnpack:
   - '**/*.{node,dll}'
-afterSign: build/notarize.js
+#afterSign: build/notarize.js
 win:
   executableName: loco
 nsis:
@@ -22,6 +22,6 @@ dmg:
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
-publish:
-  provider: generic
-  url: https://example.com/auto-updates
+#publish:
+#  provider: generic
+#  url: https://example.com/auto-updates

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import Dialog from "primevue/dialog";
 import LoadingInfo from "../components/Misc/LoadingInfo.vue";
 import FileReceiver from "../components/Misc/FileReceiver.vue";
 import { ref } from "vue";
@@ -25,10 +26,32 @@ const InfoPair = {
 }
 const infoConfig = ref(InfoPair.free)
 
-const gitCreate = () => {
+const cloneDialogVisible = ref(false)
+const remoteUrl = ref('')
+const gitClone = () => {
+    if(!remoteUrl.value.endsWith('.git')) {
+        useToastStore().warn('invalid git url')
+    }
+    else {
+        cloneDialogVisible.value = false
+        useToastStore().info('cloning, please wait.', '', undefined)
+        useIpcRenderer().send('gitClone', { repoPath: remoteUrl.value })
+        useIpcRenderer().once('gitCloneReply', (e, [ res, msg ]) => {
+            if(!res) useToastStore().error(msg)
+            else {
+                if(msg === 'cancel') useToastStore().info('think twice before you press your mouse, fool!')
+                else {
+                    useToastStore().success(`your project is cloned to ${ msg }`, '', undefined)
+                    gitExist(msg)
+                }
+            }
+        })
+    }
+}
+
+const gitInit = () => {
     useIpcRenderer().send('gitInitDialog')
     useIpcRenderer().once('gitInitDialogReply', (e, [ res, msg ]) => {
-        console.log(res, msg)
         if(res) {
             if(msg === 'cancel') useToastStore().info('think twice before you press your mouse, fool!')
             else {
@@ -41,6 +64,7 @@ const gitCreate = () => {
         }
     })
 }
+
 const gitExist = (path: string) => {
     if(!path.endsWith('.git')) {
         useToastStore().warn('Only .git files are accepted.')
@@ -69,32 +93,29 @@ const gitExist = (path: string) => {
 
 <template>
     <div class="starter">
-<!--        <Dialog class="remote-dialog" header="定义远程" v-model:visible="remoteDialogVisible">-->
-<!--            <div class="remote-dialog-content">-->
-<!--                <div class="remote-name"><span style="color: #9feaf9">名称: </span><span-->
-<!--                    class="remote-name-val">{{ remoteInfo[0] === '' ? 'origin' : remoteInfo[0] }}</span></div>-->
-<!--                <div class="remote-url" style="color: #9feaf9">url:</div>-->
-<!--                <input class="remote-url-ipt" v-model="remoteUrlToSet"-->
-<!--                       type="text" placeholder="请输入远程url" spellcheck="false">-->
-<!--            </div>-->
-<!--            <template #footer>-->
-<!--                <div class="remote-dialog-footer">-->
-<!--                    <div class="btn" @click="remoteDialogVisible = false"><i>取消</i></div>-->
-<!--                    <div class="btn" @click="pushOrPullWithRemote"><i>确认</i></div>-->
-<!--                </div>-->
-<!--            </template>-->
-<!--        </Dialog>-->
+        <Dialog class="clone-dialog" header="克隆远程" v-model:visible="cloneDialogVisible">
+            <div class="clone-dialog-content">
+                <span class="label">git 地址:</span>
+                <input class="val-url" type="text" v-model="remoteUrl" placeholder="请输入git仓库地址">
+            </div>
+            <template #footer>
+                <div class="clone-dialog-footer">
+                    <div class="btn" @click="cloneDialogVisible = false"><i>取消</i></div>
+                    <div class="btn" @click="gitClone"><i>下一步</i></div>
+                </div>
+            </template>
+        </Dialog>
 
-        <div class="create-container" @click="gitCreate">
+        <div class="create-container" @click="gitInit">
             <LoadingInfo
                 icon="pi pi-bolt" :spin="false"
                 text="[New] click to init new repository." :blink="false"/>
         </div>
 
-        <div class="clone-container">
+        <div class="clone-container" @click="remoteUrl = ''; cloneDialogVisible = true">
             <LoadingInfo
                 icon="pi pi-cloud-download" :spin="false"
-                text="[Remote] click to pull remote repository." :blink="false"/>
+                text="[Remote] click to clone remote repository." :blink="false"/>
         </div>
 
         <div class="receive-container">
@@ -158,6 +179,58 @@ const gitExist = (path: string) => {
             height: 100%;
             top: 0;
             left: 0;
+        }
+    }
+}
+
+.clone-dialog {
+    box-sizing: content-box;
+
+    .clone-dialog-content {
+        width: 260px;
+        height: 30px;
+        background-color: #2f3241;
+        font-family: cursive;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        overflow: hidden;
+
+        .label {
+            width: 70px;
+        }
+
+        .val-url {
+            width: calc(100% - 70px);
+            height: 19px;
+            border: none;
+            border-bottom: solid 1px #86a5b1;
+            outline: none;
+            background-color: transparent;
+            color: #86a5b1;
+            font-family: cursive;
+        }
+    }
+
+    .clone-dialog-footer {
+        position: relative;
+        width: 260px;
+        background-color: #2f3241;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        .btn {
+            position: relative;
+            height: 20px;
+            margin: 0 5px;
+            line-height: 20px;
+            cursor: pointer;
+
+            &:hover {
+                color: #9feaf9;
+                text-decoration: underline;
+            }
         }
     }
 }

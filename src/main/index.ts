@@ -10,6 +10,8 @@ const createWindow = () => {
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
+        minWidth: 800,
+        minHeight: 600,
         show: false,
         frame: false,
         icon: join(__dirname, '../../build/icon.ico'),

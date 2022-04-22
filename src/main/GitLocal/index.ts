@@ -73,12 +73,12 @@ class Git {
     /**
      * @description 只负责clone, 不建立实例与git目录的联系
      */
-    cmd_clone(repoPath: string, localPath: string): Promise<void> {
+    cmd_clone(repoPath: string, localPath: string): Promise<string> {
         const filename = '新建文件夹_' + getDateInNumber()
 
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<string>((resolve, reject) => {
             simpleGit().clone(repoPath, resolvePath(localPath, filename), [], (err) => {
-                err ? reject(err) : resolve()
+                err ? reject(err) : resolve(resolvePath(localPath, filename))
             })
         })
     }

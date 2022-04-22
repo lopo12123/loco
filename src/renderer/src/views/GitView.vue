@@ -87,7 +87,7 @@ const menuItems = [
                 remoteDialogVisible.value = true
             }
             else {
-                useToastStore().info('pulling, please wait.', '', null)
+                useToastStore().info('pulling, please wait.', '', undefined)
                 useIpcRenderer().send('gitPull', { first: false })
                 useIpcRenderer().once('gitPullReply', (e, [ res, msg ]) => {
                     if(res) {
@@ -110,7 +110,7 @@ const menuItems = [
                 remoteDialogVisible.value = true
             }
             else {
-                useToastStore().info('pushing, please wait.', '', null)
+                useToastStore().info('pushing, please wait.', '', undefined)
                 useIpcRenderer().send('gitPush', { first: false })
                 useIpcRenderer().once('gitPushReply', (e, [ res, msg ]) => {
                     if(res) {
@@ -192,7 +192,7 @@ const pushOrPullWithRemote = () => {
         remoteDialogVisible.value = false
 
         if(pushOrPull.value === 'push') {
-            useToastStore().info('pushing, please wait.', '', null)
+            useToastStore().info('pushing, please wait.', '', undefined)
             useIpcRenderer().send('gitPush', { first: true, remoteName: newName, remoteUrl: newUrl })
             useIpcRenderer().once('gitPushReply', (e, [ res, msg ]) => {
                 if(res) {
@@ -205,7 +205,7 @@ const pushOrPullWithRemote = () => {
             })
         }
         else {
-            useToastStore().info('pulling, please wait.', '', null)
+            useToastStore().info('pulling, please wait.', '', undefined)
             useIpcRenderer().send('gitPull', { first: true, remoteName: newName, remoteUrl: newUrl })
             useIpcRenderer().once('gitPullReply', (e, [ res, msg ]) => {
                 if(res) {

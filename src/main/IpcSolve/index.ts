@@ -108,14 +108,14 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 if(res.canceled || res.filePaths.length === 0) e.reply('gitInitDialogReply', [ true, 'cancel' ])
                 else useGit()
                     .cmd_clone(repoPath, res.filePaths[0])
-                    .then(() => {
-                        e.reply('gitCloneReply', [ true, 'success' ])
+                    .then((root) => {
+                        e.reply('gitCloneReply', [ true, root ])
                     })
             })
             .catch((err) => {
                 if(err instanceof Error) err = err.message
                 else err = JSON.stringify(err)
-                e.reply('gitLogReply', shakeFn([ false, err ]))
+                e.reply('gitCloneReply', shakeFn([ false, err ]))
             })
     })
     ipcMain.on('gitCommit', (e, { files, message }) => {
@@ -189,7 +189,7 @@ const setIpc = (winRef: BrowserWindow | null) => {
             .catch((err) => {
                 if(err instanceof Error) err = err.message
                 else err = JSON.stringify(err)
-                e.reply('gitLogReply', shakeFn([ false, err ]))
+                e.reply('gitInitDialogReply', shakeFn([ false, err ]))
             })
     })
     ipcMain.on('gitLog', (e) => {

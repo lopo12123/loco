@@ -52,6 +52,26 @@ const setIpc = (winRef: BrowserWindow | null) => {
     })
     // endregion
 
+    // region [directory]
+    ipcMain.on('directory', (e) => {
+        dialog
+            .showOpenDialog({
+                title: '选择本地保存位置',
+                buttonLabel: '确认',
+                properties: [ 'openDirectory' ]
+            })
+            .then((res) => {
+                if(res.canceled || res.filePaths.length === 0) e.reply('gitInitDialogReply', [ true, 'cancel' ])
+                else e.reply('directoryReply', [true, res.filePaths[0]])
+            })
+            .catch((err) => {
+                if(err instanceof Error) err = err.message
+                else err = JSON.stringify(err)
+                e.reply('gitLogReply', shakeFn([ false, err ]))
+            })
+    })
+    // endregion
+
     // region [explorer]
     ipcMain.on('explorer', (e, { dirPath }) => {
         const dirToOpen = resolvePath(...dirPath)
@@ -77,15 +97,25 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 e.reply('gitBaseReply', shakeFn([ false, err ]))
             })
     })
-    ipcMain.on('gitClone', (e, { repoPath, localPath, filename }) => {
-        useGit().cmd_clone(repoPath, localPath, filename)
-            .then(() => {
-                e.reply('gitCloneReply', [ true, 'success' ])
+    ipcMain.on('gitClone', (e, { repoPath }) => {
+        dialog
+            .showOpenDialog({
+                title: '选择本地保存位置',
+                buttonLabel: '确认',
+                properties: [ 'openDirectory' ]
+            })
+            .then((res) => {
+                if(res.canceled || res.filePaths.length === 0) e.reply('gitInitDialogReply', [ true, 'cancel' ])
+                else useGit()
+                    .cmd_clone(repoPath, res.filePaths[0])
+                    .then(() => {
+                        e.reply('gitCloneReply', [ true, 'success' ])
+                    })
             })
             .catch((err) => {
                 if(err instanceof Error) err = err.message
                 else err = JSON.stringify(err)
-                e.reply('gitCommitReply', shakeFn([ false, err ]))
+                e.reply('gitLogReply', shakeFn([ false, err ]))
             })
     })
     ipcMain.on('gitCommit', (e, { files, message }) => {

@@ -108,8 +108,8 @@ const setIpc = (winRef: BrowserWindow | null) => {
                 if(res.canceled || res.filePaths.length === 0) e.reply('gitInitDialogReply', [ true, 'cancel' ])
                 else useGit()
                     .cmd_clone(repoPath, res.filePaths[0])
-                    .then((root) => {
-                        e.reply('gitCloneReply', [ true, root ])
+                    .then((gitDir) => {
+                        e.reply('gitCloneReply', [ true, gitDir ])
                     })
                     .catch((err) => {
                         if(err instanceof Error) err = err.message

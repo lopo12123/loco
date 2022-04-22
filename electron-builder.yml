@@ -13,8 +13,14 @@ asarUnpack:
 win:
   executableName: loco
 nsis:
+  oneClick: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
+  installerIcon: 'build/icon.ico'
+  installerHeaderIcon: 'build/icon.ico'
+  uninstallerIcon: 'build/icon.ico'
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
 dmg:

@@ -111,6 +111,11 @@ const setIpc = (winRef: BrowserWindow | null) => {
                     .then((root) => {
                         e.reply('gitCloneReply', [ true, root ])
                     })
+                    .catch((err) => {
+                        if(err instanceof Error) err = err.message
+                        else err = JSON.stringify(err)
+                        e.reply('gitCloneReply', shakeFn([ false, err ]))
+                    })
             })
             .catch((err) => {
                 if(err instanceof Error) err = err.message
@@ -184,6 +189,11 @@ const setIpc = (winRef: BrowserWindow | null) => {
                     .cmd_init(res.filePaths[0])
                     .then((res) => {
                         e.reply('gitInitDialogReply', shakeFn([ true, res ]))
+                    })
+                    .catch((err) => {
+                        if(err instanceof Error) err = err.message
+                        else err = JSON.stringify(err)
+                        e.reply('gitInitDialogReply', shakeFn([ false, err ]))
                     })
             })
             .catch((err) => {
